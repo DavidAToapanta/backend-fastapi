@@ -170,22 +170,26 @@ CREATE INDEX IF NOT EXISTS idx_timeline_campaign_ts
 -- -----------------------------------------------------------------------------
 -- 9. Rol de aplicación con permisos estrictos de inmutabilidad en auditoría
 -- -----------------------------------------------------------------------------
-DO $$
-BEGIN
-    IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'aegis_app') THEN
-        CREATE ROLE aegis_app LOGIN PASSWORD 'cambiar_clave_app';
-    END IF;
-END
-$$;
+\getenv app_user POSTGRES_APP_USER
+\getenv app_password POSTGRES_APP_PASSWORD
+SELECT :'app_user' = current_user AS mismo_rol,
+       NOT EXISTS (SELECT FROM pg_roles WHERE rolname = :'app_user') AS crear_rol \gset
+\if :mismo_rol
+    DO $$ BEGIN RAISE EXCEPTION 'POSTGRES_APP_USER debe ser distinto de POSTGRES_USER'; END $$;
+\endif
+\if :crear_rol
+    CREATE ROLE :"app_user" LOGIN PASSWORD :'app_password';
+\endif
+\unset app_password
 
-GRANT USAGE ON SCHEMA cti_core TO aegis_app;
-GRANT USAGE ON SCHEMA cti_audit TO aegis_app;
+GRANT USAGE ON SCHEMA cti_core TO :"app_user";
+GRANT USAGE ON SCHEMA cti_audit TO :"app_user";
 
 -- Permisos operativos sobre el esquema analítico cti_core
-GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA cti_core TO aegis_app;
-GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA cti_core TO aegis_app;
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA cti_core TO :"app_user";
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA cti_core TO :"app_user";
 
 -- Inmutabilidad estricta sobre auditoría: solo SELECT e INSERT (prohibido UPDATE/DELETE)
-REVOKE ALL ON TABLE cti_audit.audit_events FROM aegis_app;
-GRANT SELECT, INSERT ON TABLE cti_audit.audit_events TO aegis_app;
-GRANT USAGE, SELECT ON SEQUENCE cti_audit.audit_events_audit_id_seq TO aegis_app;
+REVOKE ALL ON TABLE cti_audit.audit_events FROM :"app_user";
+GRANT SELECT, INSERT ON TABLE cti_audit.audit_events TO :"app_user";
+GRANT USAGE, SELECT ON SEQUENCE cti_audit.audit_events_audit_id_seq TO :"app_user";

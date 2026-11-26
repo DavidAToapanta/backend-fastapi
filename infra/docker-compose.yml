@@ -7,12 +7,15 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Completa POSTGRES_PASSWORD en .env}
+      POSTGRES_APP_USER: ${POSTGRES_APP_USER:?Completa POSTGRES_APP_USER en .env}
+      POSTGRES_APP_PASSWORD: ${POSTGRES_APP_PASSWORD:?Completa POSTGRES_APP_PASSWORD en .env}
     ports:
-      - "127.0.0.1:5434:5432"
+      - "127.0.0.1:${POSTGRES_PORT:-5434}:5432"
     volumes:
       - datos_postgres:/var/lib/postgresql/data
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/10-schema.sql:ro
     healthcheck:
-      test: ["CMD", "pg_isready", "-h", "127.0.0.1", "-U", "aegis_admin", "-d", "${POSTGRES_DB}"]
+      test: ["CMD", "pg_isready", "-h", "127.0.0.1", "-U", "${POSTGRES_USER}", "-d", "${POSTGRES_DB}"]
       interval: 5s
       timeout: 3s
       retries: 10
@@ -25,7 +28,11 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      DATABASE_URL: "postgresql://${POSTGRES_APP_USER}:${POSTGRES_APP_PASSWORD}@postgres:5432/${POSTGRES_DB}"
+      PGHOST: postgres
+      PGPORT: "5432"
+      PGDATABASE: ${POSTGRES_DB}
+      PGUSER: ${POSTGRES_APP_USER}
+      PGPASSWORD: ${POSTGRES_APP_PASSWORD}
       OLLAMA_BASE_URL: "http://host.docker.internal:11434"
       METRICAS_ML_DIR: /data/exports
     volumes:

@@ -6,8 +6,8 @@ import psycopg
 def conectar_postgres() -> psycopg.Connection:
     """Abre la conexión con las credenciales configuradas para la API."""
     url = os.getenv("DATABASE_URL", "").strip()
-    if not url:
-        raise ValueError("DATABASE_URL no configurada")
+    if not url and not os.getenv("PGHOST"):
+        raise ValueError("Configura DATABASE_URL o PGHOST para conectar con PostgreSQL")
 
     return psycopg.connect(
         url,

@@ -6,6 +6,7 @@ Valida rutas de origen, parámetros de PostgreSQL 16 y robustez de la clave HMAC
 from functools import lru_cache
 from pathlib import Path
 
+from psycopg.conninfo import make_conninfo
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -31,7 +32,7 @@ class Settings(BaseSettings):
     )
 
     POSTGRES_HOST: str = Field(default="127.0.0.1")
-    POSTGRES_PORT: int = Field(default=5433, ge=1, le=65535)
+    POSTGRES_PORT: int = Field(default=5434, ge=1, le=65535)
     POSTGRES_DB: str = Field(default="aegis_cti")
     POSTGRES_USER: str = Field(default="aegis_admin")
     POSTGRES_PASSWORD: str = Field(default="cambiar_clave_segura")
@@ -77,23 +78,17 @@ class Settings(BaseSettings):
     @property
     def dsn_admin(self) -> str:
         """Cadena de conexión PostgreSQL con privilegios administrativos de carga."""
-        return (
-            f"host={self.POSTGRES_HOST} "
-            f"port={self.POSTGRES_PORT} "
-            f"dbname={self.POSTGRES_DB} "
-            f"user={self.POSTGRES_USER} "
-            f"password={self.POSTGRES_PASSWORD}"
+        return make_conninfo(
+            host=self.POSTGRES_HOST, port=self.POSTGRES_PORT, dbname=self.POSTGRES_DB,
+            user=self.POSTGRES_USER, password=self.POSTGRES_PASSWORD,
         )
 
     @property
     def dsn_app(self) -> str:
         """Cadena de conexión PostgreSQL restringida para la aplicación (solo INSERT/SELECT en auditoría)."""
-        return (
-            f"host={self.POSTGRES_HOST} "
-            f"port={self.POSTGRES_PORT} "
-            f"dbname={self.POSTGRES_DB} "
-            f"user={self.POSTGRES_APP_USER} "
-            f"password={self.POSTGRES_APP_PASSWORD}"
+        return make_conninfo(
+            host=self.POSTGRES_HOST, port=self.POSTGRES_PORT, dbname=self.POSTGRES_DB,
+            user=self.POSTGRES_APP_USER, password=self.POSTGRES_APP_PASSWORD,
         )
 
 
