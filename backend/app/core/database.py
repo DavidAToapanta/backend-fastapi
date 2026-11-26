@@ -22,6 +22,7 @@ def obtener_conexion(
     cfg = settings or get_settings()
     dsn = cfg.dsn_app if usar_rol_app else cfg.dsn_admin
     with psycopg.connect(dsn) as conn:
+        conn.execute("SET TIME ZONE 'UTC'")
         yield conn
 
 
