@@ -1,0 +1,22 @@
+{
+  "_nota": "Copia este archivo como config_rol2.json y ajusta SOLO si los datos reales lo requieren. Úsalo con --config config_rol2.json",
+  "umbrales_reglas": {
+    "negados_mismo_puerto_hora": 100,
+    "puertos_criticos_distintos_hora": 4,
+    "fallidos_cuenta_hora": 50,
+    "interrumpidas_cuenta_hora": 50,
+    "identidades_por_cuenta": 3,
+    "ratio_admin_cuenta": 0.9,
+    "minimo_operaciones_admin": 100,
+    "ssh_misma_ip_hora": 10
+  },
+  "anticipacion": {
+    "z_medio": 3.0,
+    "z_alto": 6.0,
+    "z_critico": 10.0,
+    "dias_linea_base": 7,
+    "minimo_dias_historia": 3,
+    "z_alerta_hora": 6.0,
+    "peso_prior_transiciones": 10.0
+  }
+}
