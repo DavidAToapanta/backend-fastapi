@@ -1,18 +1,27 @@
-# Entornos virtuales
-venv/
-.venv/
-env/
-
-# Caché de Python
-__pycache__/
-*.py[cod]
-
-# Variables de entorno
+# Variables de entorno y secretos (LOPDP)
 .env
+.env.*
+!.env.example
 
-# IDEs
-.vscode/
-.idea/
-# Archivos de datos
+# Datos crudos y procesados (CSV / Parquet)
+data/raw/
+data/processed/
 *.csv
 *.parquet
+
+# Entornos virtuales y cache de Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Sistema operativo e IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
