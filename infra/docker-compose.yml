@@ -1,0 +1,34 @@
+name: backend-fastapi
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Completa POSTGRES_PASSWORD en .env}
+    ports:
+      - "127.0.0.1:5433:5432"
+    volumes:
+      - datos_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-h", "127.0.0.1", "-U", "aegis_admin", "-d", "${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  backend:
+    image: backend-fastapi:local
+    build:
+      context: ..
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "postgresql://${POSTGRES_APP_USER}:${POSTGRES_APP_PASSWORD}@postgres:5432/${POSTGRES_DB}"
+      OLLAMA_BASE_URL: "http://host.docker.internal:11434"
+    ports:
+      - "127.0.0.1:8000:8000"
+
+volumes:
+  datos_postgres:
