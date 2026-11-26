@@ -8,7 +8,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Completa POSTGRES_PASSWORD en .env}
     ports:
-      - "127.0.0.1:5433:5432"
+      - "127.0.0.1:5434:5432"
     volumes:
       - datos_postgres:/var/lib/postgresql/data
     healthcheck:
@@ -27,6 +27,12 @@ services:
     environment:
       DATABASE_URL: "postgresql://${POSTGRES_APP_USER}:${POSTGRES_APP_PASSWORD}@postgres:5432/${POSTGRES_DB}"
       OLLAMA_BASE_URL: "http://host.docker.internal:11434"
+      METRICAS_ML_DIR: /data/exports
+    volumes:
+      - type: bind
+        source: ${METRICAS_ML_DIR_HOST:-../data/exports}
+        target: /data/exports
+        read_only: true
     ports:
       - "127.0.0.1:8000:8000"
 

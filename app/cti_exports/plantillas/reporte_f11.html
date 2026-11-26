@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Reporte de inteligencia de amenazas | AegisHealth-CTI</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 17mm 18mm 18mm;
+      @bottom-left {
+        content: "AegisHealth-CTI  ·  Borrador con datos ficticios";
+        color: #415866;
+        font-size: 8pt;
+      }
+      @bottom-right {
+        content: counter(page) " / " counter(pages);
+        color: #415866;
+        font-size: 8pt;
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: #182b3b;
+      font: 10pt/1.43 "DejaVu Sans", sans-serif;
+    }
+    p { margin: 0 0 3mm; }
+    .pagina + .pagina { break-before: page; }
+    .portada { border-top: 2.3mm solid #146659; padding-top: 4mm; }
+    .linea-ficha {
+      color: #124f49;
+      font-size: 9pt;
+      font-weight: bold;
+      letter-spacing: .04em;
+    }
+    .borrador {
+      display: inline-block;
+      background: #fff1cc;
+      color: #61420f;
+      padding: 1.2mm 2.5mm;
+      margin: 2mm 0 0;
+      font-size: 9pt;
+      font-weight: bold;
+    }
+    h1 {
+      margin: 3mm 0 3mm;
+      max-width: 155mm;
+      font-size: 27pt;
+      line-height: 1.12;
+      letter-spacing: -.025em;
+    }
+    .indicadores { width: 100%; margin: 5mm 0 7mm; table-layout: fixed; }
+    .indicadores td {
+      background: #e9f3f1;
+      padding: 3mm 4mm;
+      border-right: 1mm solid white;
+    }
+    .indicadores td:last-child { border-right: 0; }
+    .indicadores strong { display: block; color: #124f49; font-size: 16pt; }
+    .indicadores span { font-size: 8.5pt; }
+    section { margin: 0 0 7mm; }
+    h2 {
+      margin: 0 0 3mm;
+      padding-bottom: 1.7mm;
+      border-bottom: .3mm solid #b7cbc9;
+      font-size: 14pt;
+      line-height: 1.25;
+      break-after: avoid;
+    }
+    .tabla { width: 100%; border-collapse: collapse; margin: 2mm 0 3mm; }
+    .tabla th, .tabla td {
+      padding: 2.3mm 2.6mm;
+      text-align: left;
+      vertical-align: top;
+    }
+    .tabla th { background: #153a48; color: white; font-size: 8.5pt; }
+    .tabla td { border-bottom: .2mm solid #d5e0e3; }
+    .tabla tr:nth-child(even) td { background: #f2f6f7; }
+    tr { break-inside: avoid; }
+    .nota {
+      padding: 3mm 3.8mm;
+      border-left: 1mm solid #146659;
+      background: #e9f3f1;
+      break-inside: avoid;
+    }
+    .encabezado-pagina {
+      margin: 0 0 7mm;
+      padding-bottom: 2mm;
+      border-bottom: .7mm solid #146659;
+    }
+    .etiqueta { font-weight: bold; color: #124f49; }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="pagina">
+      <header class="portada">
+        <div class="linea-ficha">AegisHealth-CTI / Ficha F-11</div>
+        <div class="borrador">Borrador · Datos ficticios</div>
+        <h1>Reporte de inteligencia de amenazas</h1>
+        <p>{{ resumen }}</p>
+      </header>
+
+      <table class="indicadores" aria-label="Indicadores del borrador">
+        <tr>
+        {% for cifra, nombre in indicadores %}
+          <td><strong>{{ cifra }}</strong><span>{{ nombre }}</span></td>
+        {% endfor %}
+        </tr>
+      </table>
+
+      <section>
+        <h2>1. Fuentes y metodología</h2>
+        <p>{{ metodologia }}</p>
+        <table class="tabla">
+          <thead><tr><th>Fuente de ejemplo</th><th>Registros</th><th>Uso en el análisis</th></tr></thead>
+          <tbody>
+          {% for fuente, registros, uso in fuentes %}
+            <tr><td>{{ fuente }}</td><td>{{ registros }}</td><td>{{ uso }}</td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        <p><span class="etiqueta">Admiralty</span> {{ admiralty }}</p>
+      </section>
+
+      <section>
+        <h2>2. Evaluación de adversarios</h2>
+        <p>{{ adversarios }}</p>
+      </section>
+
+      <section>
+        <h2>3. Inteligencia estratégica</h2>
+        <p>{{ impacto }}</p>
+      </section>
+    </div>
+
+    <div class="pagina">
+      <div class="linea-ficha encabezado-pagina">AegisHealth-CTI / Ficha F-11</div>
+
+      <section>
+        <h2>4. Inteligencia táctica</h2>
+        <p>Las técnicas siguientes ilustran cómo se vinculará cada observación con MITRE ATT&amp;CK.</p>
+        <table class="tabla">
+          <thead><tr><th>Técnica</th><th>Comportamiento simulado</th></tr></thead>
+          <tbody>
+          {% for tecnica, comportamiento in tecnicas %}
+            <tr><td>{{ tecnica }}</td><td>{{ comportamiento }}</td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>5. Inteligencia operativa</h2>
+        <table class="tabla">
+          <thead><tr><th>Campaña</th><th>Ventana ilustrativa</th><th>Hallazgo</th></tr></thead>
+          <tbody>
+          {% for codigo, ventana, hallazgo in campanas %}
+            <tr><td>{{ codigo }}</td><td>{{ ventana }}</td><td>{{ hallazgo }}</td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        <p>{{ nota_temporal }}</p>
+      </section>
+
+      <section>
+        <h2>6. Inteligencia técnica</h2>
+        <p><span class="etiqueta">IoA</span> {{ comportamiento_observable }}</p>
+        <p><span class="etiqueta">IoC</span> {{ indicador_compromiso }}</p>
+        <p>{{ metricas }}</p>
+        <p class="nota">{{ exportaciones }}</p>
+      </section>
+    </div>
+
+    <div class="pagina">
+      <div class="linea-ficha encabezado-pagina">AegisHealth-CTI / Ficha F-11</div>
+
+      <section>
+        <h2>7. Evaluación de escenarios (IPE)</h2>
+        <p>{{ alcance_ipe }}</p>
+        <table class="tabla">
+          <thead>
+            <tr><th>Escenario</th><th>Probabilidad</th><th>Impacto</th><th>Descripción</th></tr>
+          </thead>
+          <tbody>
+          {% for nombre, probabilidad, impacto_ipe, descripcion in escenarios %}
+            <tr>
+              <th scope="row">{{ nombre }}</th><td>{{ probabilidad }}</td>
+              <td>{{ impacto_ipe }}</td><td>{{ descripcion }}</td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>8. Conclusiones y priorización de controles</h2>
+        <p>{{ conclusiones }}</p>
+        <table class="tabla">
+          <thead><tr><th>Plazo</th><th>Control recomendado para el ejercicio</th></tr></thead>
+          <tbody>
+          {% for plazo, control in controles %}
+            <tr><td>{{ plazo }}</td><td>{{ control }}</td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        <p class="nota">{{ estado_evidencias }}</p>
+      </section>
+    </div>
+  </main>
+</body>
+</html>
