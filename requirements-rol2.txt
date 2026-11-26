@@ -1,0 +1,7 @@
+# Librerias del Rol 2 (ML local + motor CTI). Polars no hace falta para esta parte.
+pandas
+pyarrow
+numpy
+scikit-learn
+pyyaml
+stix2

@@ -1,0 +1,18 @@
+{
+  "nota": "Indicadores del EJERCICIO (datos sintéticos del Hackatón IESS 2026). No usar como inteligencia real. No consultar ni escanear ninguna de estas IPs.",
+  "etiquetas": ["synthetic-exercise-data", "hackathon-simulation"],
+  "fuente": "docs/evidencias/evidencias.json (Rol 1)",
+  "ips_destino_externas": ["186.46.219.18"],
+  "puertos_canal_sombra": [8443],
+  "ips_origen_vigiladas": ["10.10.100.10", "10.10.100.20", "10.10.100.40", "10.10.100.50"],
+  "servidor_critico": "10.10.100.30",
+  "cuentas_vigiladas": [
+    "ACC-410762D420CB",
+    "ACC-A9764DFB78FE",
+    "ACC-79FE100B6B16",
+    "ACC-DC30A0D39E5A",
+    "ACC-877CD64A4EC0",
+    "ACC-4ED6B617541D",
+    "ACC-16A5FAA35471"
+  ]
+}

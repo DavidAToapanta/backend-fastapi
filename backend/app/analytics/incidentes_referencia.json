@@ -1,0 +1,46 @@
+{
+  "nota": "Verdad conocida para EVALUAR el modelo. Nunca se usa para entrenar. Fuente: docs/evidencias/evidencias.json (Rol 1). Solo tokens seudonimizados.",
+  "incidentes": [
+    {
+      "campana": "CAMP-2026-003",
+      "incidente": "A - Fuerza bruta Telnet",
+      "ventanas": [
+        {"tabla": "fw_hora", "entidad": "USR-5387F94B394C", "hora": "2026-10-10 00:00:00"},
+        {"tabla": "med_hora", "entidad": "ACC-410762D420CB", "hora": "2026-10-10 00:00:00"}
+      ]
+    },
+    {
+      "campana": "CAMP-2026-004",
+      "incidente": "B - Escaneo multiservicio y spraying",
+      "ventanas": [
+        {"tabla": "fw_hora", "entidad": "USR-936EFE804AB3", "hora": "2026-10-19 14:00:00"},
+        {"tabla": "med_hora", "entidad": "ACC-A9764DFB78FE", "hora": "2026-10-19 14:00:00"}
+      ]
+    },
+    {
+      "campana": "CAMP-2026-002",
+      "incidente": "C - Transferencia masiva por SSH",
+      "ventanas": [
+        {"tabla": "fw_hora", "entidad": "USR-000DE3FE2773", "hora": "2026-10-07 13:00:00"},
+        {"tabla": "med_hora", "entidad": "ACC-79FE100B6B16", "hora": "2026-10-07 13:00:00"}
+      ]
+    },
+    {
+      "campana": "CAMP-2026-001",
+      "incidente": "D - Exfiltracion por 8443 (desfase +12h)",
+      "ventanas": [
+        {"tabla": "fw_hora", "entidad": "USR-D21470F4ED35", "hora": "2026-10-24 22:00:00"},
+        {"tabla": "med_hora", "entidad": "ACC-DC30A0D39E5A", "hora": "2026-10-24 10:00:00"}
+      ]
+    },
+    {
+      "campana": "CAMP-2026-005",
+      "incidente": "E - Abuso de privilegios en cuentas especiales",
+      "ventanas": [
+        {"tabla": "med_periodo", "entidad": "ACC-877CD64A4EC0"},
+        {"tabla": "med_periodo", "entidad": "ACC-4ED6B617541D"},
+        {"tabla": "med_periodo", "entidad": "ACC-16A5FAA35471"}
+      ]
+    }
+  ]
+}
