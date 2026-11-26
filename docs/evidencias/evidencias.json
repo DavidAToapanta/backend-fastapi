@@ -1,0 +1,882 @@
+{
+  "generado_por": "scripts/verificar_datos.py",
+  "version_esquema": "1.0-rol1",
+  "lopdp_politica": "Cero PII y cero cuentas técnicas en claro; tokens HMAC-SHA256 truncados a 12 hex.",
+  "resumen_datasets": {
+    "total_registros_combinados": 10023532,
+    "firewall": {
+      "archivo": "Registros_conexiones_FW_10_2026.csv",
+      "tamano_bytes": 555501623,
+      "sha256": "1b3dc2abfef8dd2b04cf4dc2620f7610b7a6ad11cd67f19b2fd9aed9c1cd3261",
+      "bom_utf8_detectado": true,
+      "total_filas": 5009031,
+      "duplicados_exactos": 2607,
+      "rango_fechas": {
+        "min": "2026-10-01 00:00:00",
+        "max": "2026-10-31 23:59:59"
+      },
+      "usuario_destino_vacios": 894713,
+      "ip_destino_central_filas": 3037582,
+      "usuario_destino_central_filas": 3037582,
+      "relacion_1a1_central_exacta": true
+    },
+    "sistema_medico": {
+      "archivo": "Registros_conexiones_sist_med_iess.csv",
+      "tamano_bytes": 457769746,
+      "sha256": "6a0a4eb19e821674c5b5cb42d2cdd765a35af569a8cdab5883835421f21e671a",
+      "bom_utf8_detectado": true,
+      "total_filas": 5014501,
+      "duplicados_exactos": 5220,
+      "rango_fechas": {
+        "fecha_min": "20261001",
+        "fecha_max": "20261031",
+        "hora_min": "00:00:00",
+        "hora_max": "23:59:59"
+      },
+      "filas_sim": 5000000,
+      "filas_cuentas_especiales": 14501,
+      "cuentas_especiales_unicas": 16,
+      "ip_central_filas": 3761384,
+      "acciones_distribucion": {
+        "ACCESO FALLIDO": 559308,
+        "Inactivacion de usuarios": 559300,
+        "Reactivacion de usuarios": 558614,
+        "TRANFERENCIA INTERRUMPIDA": 557828,
+        "DESCARGA EXITOSA": 556321,
+        "USUARIOS - Activar usuario": 556242,
+        "TRANFERENCIA EXITOSA": 555890,
+        "USUARIOS - Actualizar nivel de Usuario": 555563,
+        "INGRESO SIST_MED_IESS": 555435
+      },
+      "trampa_typo_tranferencia": {
+        "tranferencia_exitosa_sin_s": 555890,
+        "tranferencia_interrumpida_sin_s": 557828,
+        "transferencia_con_s_encontradas": 0
+      }
+    }
+  },
+  "histograma_horario": {
+    "firewall_00_23": {
+      "00": 210495,
+      "01": 208972,
+      "02": 208372,
+      "03": 208842,
+      "04": 209097,
+      "05": 207848,
+      "06": 208271,
+      "07": 208832,
+      "08": 207831,
+      "09": 209008,
+      "10": 208350,
+      "11": 208100,
+      "12": 208687,
+      "13": 208499,
+      "14": 209616,
+      "15": 208605,
+      "16": 208943,
+      "17": 208081,
+      "18": 208374,
+      "19": 208551,
+      "20": 209136,
+      "21": 208809,
+      "22": 208653,
+      "23": 209059
+    },
+    "medsys_total_00_23": {
+      "00": 210212,
+      "01": 209045,
+      "02": 208165,
+      "03": 209183,
+      "04": 208361,
+      "05": 209066,
+      "06": 208922,
+      "07": 209019,
+      "08": 208596,
+      "09": 207845,
+      "10": 209444,
+      "11": 209025,
+      "12": 209569,
+      "13": 210929,
+      "14": 208612,
+      "15": 208621,
+      "16": 209136,
+      "17": 209409,
+      "18": 208918,
+      "19": 208215,
+      "20": 208910,
+      "21": 208665,
+      "22": 208159,
+      "23": 208475
+    },
+    "medsys_especiales_00_23": {
+      "00": 2235,
+      "01": 255,
+      "02": 257,
+      "03": 269,
+      "04": 248,
+      "05": 256,
+      "06": 464,
+      "07": 741,
+      "08": 465,
+      "09": 249,
+      "10": 339,
+      "11": 795,
+      "12": 415,
+      "13": 3366,
+      "14": 1310,
+      "15": 342,
+      "16": 342,
+      "17": 388,
+      "18": 275,
+      "19": 243,
+      "20": 391,
+      "21": 334,
+      "22": 241,
+      "23": 281
+    },
+    "resumen_horas_tarde_noche_medsys": {
+      "medsys_total_horas_00_12": 2716452,
+      "medsys_total_horas_13_23": 2298049,
+      "porcentaje_horas_13_23": 45.83,
+      "medsys_especiales_horas_13_23": 7513,
+      "confirmacion_reloj_24h_y_prohibicion_ajuste_global": true
+    }
+  },
+  "auditoria_ips_sin_puntos": {
+    "fw_ip_origen": {
+      "total_filas_evaluadas": 5009031,
+      "ips_unicas_evaluadas": 4321656,
+      "dotless_ip_filas": 0,
+      "dotless_reparables_100_255_filas": 0,
+      "dotless_no_reparables_filas": 0,
+      "no_dotless_invalidas_filas": 0,
+      "octetos_rango_observado": null,
+      "octetos_fuera_rango_filas": {
+        "b1": 0,
+        "b2": 0,
+        "b3": 0
+      },
+      "ejemplos_reparables": [],
+      "ejemplos_no_reparables": [],
+      "ips_publicas_post_reparacion": {}
+    },
+    "fw_ip_destino": {
+      "total_filas_evaluadas": 5009031,
+      "ips_unicas_evaluadas": 1859186,
+      "dotless_ip_filas": 493,
+      "dotless_reparables_100_255_filas": 493,
+      "dotless_no_reparables_filas": 0,
+      "no_dotless_invalidas_filas": 0,
+      "octetos_rango_observado": {
+        "b1_min": 100,
+        "b1_max": 254,
+        "b2_min": 100,
+        "b2_max": 254,
+        "b3_min": 100,
+        "b3_max": 254
+      },
+      "octetos_fuera_rango_filas": {
+        "b1": 0,
+        "b2": 0,
+        "b3": 0
+      },
+      "ejemplos_reparables": [
+        {
+          "raw": "10122243161",
+          "reconstruida": "10.122.243.161",
+          "octetos": [
+            122,
+            243,
+            161
+          ],
+          "ocurrencias": 1
+        },
+        {
+          "raw": "10123129242",
+          "reconstruida": "10.123.129.242",
+          "octetos": [
+            123,
+            129,
+            242
+          ],
+          "ocurrencias": 1
+        },
+        {
+          "raw": "10181125108",
+          "reconstruida": "10.181.125.108",
+          "octetos": [
+            181,
+            125,
+            108
+          ],
+          "ocurrencias": 1
+        },
+        {
+          "raw": "10228120220",
+          "reconstruida": "10.228.120.220",
+          "octetos": [
+            228,
+            120,
+            220
+          ],
+          "ocurrencias": 1
+        },
+        {
+          "raw": "10105131151",
+          "reconstruida": "10.105.131.151",
+          "octetos": [
+            105,
+            131,
+            151
+          ],
+          "ocurrencias": 1
+        }
+      ],
+      "ejemplos_no_reparables": [],
+      "ips_publicas_post_reparacion": {
+        "186.46.219.18": 1
+      }
+    },
+    "medsys_total_ip_conexion": {
+      "total_filas_evaluadas": 5014501,
+      "ips_unicas_evaluadas": 13384,
+      "dotless_ip_filas": 787,
+      "dotless_reparables_100_255_filas": 787,
+      "dotless_no_reparables_filas": 0,
+      "no_dotless_invalidas_filas": 0,
+      "octetos_rango_observado": {
+        "b1_min": 100,
+        "b1_max": 254,
+        "b2_min": 100,
+        "b2_max": 255,
+        "b3_min": 100,
+        "b3_max": 254
+      },
+      "octetos_fuera_rango_filas": {
+        "b1": 0,
+        "b2": 0,
+        "b3": 0
+      },
+      "ejemplos_reparables": [
+        {
+          "raw": "10126122136",
+          "reconstruida": "10.126.122.136",
+          "octetos": [
+            126,
+            122,
+            136
+          ],
+          "ocurrencias": 1
+        },
+        {
+          "raw": "10148159113",
+          "reconstruida": "10.148.159.113",
+          "octetos": [
+            148,
+            159,
+            113
+          ],
+          "ocurrencias": 1
+        },
+        {
+          "raw": "10143248111",
+          "reconstruida": "10.143.248.111",
+          "octetos": [
+            143,
+            248,
+            111
+          ],
+          "ocurrencias": 1
+        },
+        {
+          "raw": "10124250125",
+          "reconstruida": "10.124.250.125",
+          "octetos": [
+            124,
+            250,
+            125
+          ],
+          "ocurrencias": 1
+        },
+        {
+          "raw": "10187128176",
+          "reconstruida": "10.187.128.176",
+          "octetos": [
+            187,
+            128,
+            176
+          ],
+          "ocurrencias": 1
+        }
+      ],
+      "ejemplos_no_reparables": [],
+      "ips_publicas_post_reparacion": {}
+    },
+    "medsys_sim_ip_conexion": {
+      "total_filas_evaluadas": 5000000,
+      "ips_unicas_evaluadas": 10000,
+      "dotless_ip_filas": 0,
+      "dotless_reparables_100_255_filas": 0,
+      "dotless_no_reparables_filas": 0,
+      "no_dotless_invalidas_filas": 0,
+      "octetos_rango_observado": null,
+      "octetos_fuera_rango_filas": {
+        "b1": 0,
+        "b2": 0,
+        "b3": 0
+      },
+      "ejemplos_reparables": [],
+      "ejemplos_no_reparables": [],
+      "ips_publicas_post_reparacion": {}
+    },
+    "medsys_especiales_ip_conexion": {
+      "total_filas_evaluadas": 14501,
+      "ips_unicas_evaluadas": 3385,
+      "dotless_ip_filas": 787,
+      "dotless_reparables_100_255_filas": 787,
+      "dotless_no_reparables_filas": 0,
+      "no_dotless_invalidas_filas": 0,
+      "octetos_rango_observado": {
+        "b1_min": 100,
+        "b1_max": 254,
+        "b2_min": 100,
+        "b2_max": 255,
+        "b3_min": 100,
+        "b3_max": 254
+      },
+      "octetos_fuera_rango_filas": {
+        "b1": 0,
+        "b2": 0,
+        "b3": 0
+      },
+      "ejemplos_reparables": [
+        {
+          "raw": "10147243249",
+          "reconstruida": "10.147.243.249",
+          "octetos": [
+            147,
+            243,
+            249
+          ],
+          "ocurrencias": 1
+        },
+        {
+          "raw": "10210189170",
+          "reconstruida": "10.210.189.170",
+          "octetos": [
+            210,
+            189,
+            170
+          ],
+          "ocurrencias": 1
+        },
+        {
+          "raw": "10228221176",
+          "reconstruida": "10.228.221.176",
+          "octetos": [
+            228,
+            221,
+            176
+          ],
+          "ocurrencias": 1
+        },
+        {
+          "raw": "10125189201",
+          "reconstruida": "10.125.189.201",
+          "octetos": [
+            125,
+            189,
+            201
+          ],
+          "ocurrencias": 1
+        },
+        {
+          "raw": "10180123133",
+          "reconstruida": "10.180.123.133",
+          "octetos": [
+            180,
+            123,
+            133
+          ],
+          "ocurrencias": 1
+        }
+      ],
+      "ejemplos_no_reparables": [],
+      "ips_publicas_post_reparacion": {}
+    },
+    "medsys_dotless_por_account_token": {
+      "ACC-0639B2D753A4": 186,
+      "ACC-877CD64A4EC0": 137,
+      "ACC-16A5FAA35471": 100,
+      "ACC-7DE8F669601E": 67,
+      "ACC-47DB66623372": 66,
+      "ACC-4F8BEF63C78C": 64,
+      "ACC-CCABDA8231E1": 45,
+      "ACC-CAEF7516B5C5": 29,
+      "ACC-1B3035A0DF46": 24,
+      "ACC-4ED6B617541D": 22,
+      "ACC-69C5B524099D": 21,
+      "ACC-2CF46526E77B": 15,
+      "ACC-A9764DFB78FE": 11
+    },
+    "confirmacion_unica_ip_publica": {
+      "fw_ips_publicas": {
+        "186.46.219.18": 1
+      },
+      "medsys_ips_publicas": {},
+      "ip_publica_esperada_unica": true
+    }
+  },
+  "auditoria_identidades_y_colisiones": {
+    "firewall": {
+      "usuario_origen_unicos": 934,
+      "usuario_destino_personales_unicos": 686,
+      "formato_sin_un_punto": 0,
+      "con_espacios_o_no_ascii": 0,
+      "apellido_longitud_min": 3,
+      "apellido_longitud_max": 13,
+      "apellidos_con_particula_concatenada_detectados": 19
+    },
+    "sistema_medico": {
+      "nombres_completos_unicos": 13951,
+      "distribucion_palabras_por_nombre": {
+        "4": 13950,
+        "5": 1
+      },
+      "nombres_menos_4_palabras": 0,
+      "nombres_mas_4_palabras": 1,
+      "nombres_con_particulas": {
+        "total_nombres_con_particula": 1,
+        "en_apellidos": 0,
+        "en_nombres": 1,
+        "frecuencia_particulas": {
+          "del": 1
+        }
+      }
+    },
+    "colisiones_canonico_nombre1_apellido1": {
+      "canonicos_unicos_medsys": 5144,
+      "canonicos_con_colision": 2016,
+      "porcentaje_canonicos_con_colision": 39.19,
+      "nombres_completos_afectados": 10823,
+      "distribucion_multiplicidad": {
+        "1": 3128,
+        "2": 1395,
+        "3": 405,
+        "4": 95,
+        "5": 21,
+        "51": 1,
+        "52": 1,
+        "53": 1,
+        "54": 1,
+        "55": 1,
+        "56": 3,
+        "57": 4,
+        "58": 5,
+        "59": 5,
+        "60": 5,
+        "61": 9,
+        "62": 8,
+        "63": 11,
+        "64": 7,
+        "65": 4,
+        "66": 6,
+        "67": 6,
+        "68": 7,
+        "69": 1,
+        "70": 6,
+        "71": 4,
+        "72": 1,
+        "73": 1,
+        "74": 1,
+        "75": 1
+      },
+      "filas_medsys_totales_con_identidad_ambigua": 5005564,
+      "filas_medsys_especiales_con_identidad_ambigua": 5564,
+      "interseccion_canonicos_fw_y_medsys": 164,
+      "top_15_actor_tokens_mas_colisiones": [
+        {
+          "actor_token": "USR-2E5BC7FB9B0F",
+          "personas_distintas": 75
+        },
+        {
+          "actor_token": "USR-7BE6641D5E88",
+          "personas_distintas": 74
+        },
+        {
+          "actor_token": "USR-869568C4CFF3",
+          "personas_distintas": 73
+        },
+        {
+          "actor_token": "USR-738AD9D52ADC",
+          "personas_distintas": 72
+        },
+        {
+          "actor_token": "USR-D09F1622CF5A",
+          "personas_distintas": 71
+        },
+        {
+          "actor_token": "USR-DE2CF49CE8FA",
+          "personas_distintas": 71
+        },
+        {
+          "actor_token": "USR-F623C21A3BC7",
+          "personas_distintas": 71
+        },
+        {
+          "actor_token": "USR-48C1F1895BAE",
+          "personas_distintas": 71
+        },
+        {
+          "actor_token": "USR-81E8A955613C",
+          "personas_distintas": 70
+        },
+        {
+          "actor_token": "USR-CC61B7C8C3CC",
+          "personas_distintas": 70
+        },
+        {
+          "actor_token": "USR-307E9F89AE46",
+          "personas_distintas": 70
+        },
+        {
+          "actor_token": "USR-1DEBBCE6E3CB",
+          "personas_distintas": 70
+        },
+        {
+          "actor_token": "USR-F5147E47451E",
+          "personas_distintas": 70
+        },
+        {
+          "actor_token": "USR-7DC394325324",
+          "personas_distintas": 70
+        },
+        {
+          "actor_token": "USR-9FB798D92DCB",
+          "personas_distintas": 69
+        }
+      ],
+      "estado_actores_incidentes_A_a_D": {
+        "incidente_A": {
+          "actor_token": "USR-5387F94B394C",
+          "personas_distintas_con_mismo_canonico": 1,
+          "identidad_ambigua": false
+        },
+        "incidente_B": {
+          "actor_token": "USR-936EFE804AB3",
+          "personas_distintas_con_mismo_canonico": 4,
+          "identidad_ambigua": true
+        },
+        "incidente_C": {
+          "actor_token": "USR-000DE3FE2773",
+          "personas_distintas_con_mismo_canonico": 1,
+          "identidad_ambigua": false
+        },
+        "incidente_D": {
+          "actor_token": "USR-D21470F4ED35",
+          "personas_distintas_con_mismo_canonico": 1,
+          "identidad_ambigua": false
+        }
+      }
+    }
+  },
+  "auditoria_canal_8443_tcp": {
+    "total_registros_8443": 811,
+    "rango_fechas": {
+      "min": "2026-10-01 00:43:50",
+      "max": "2026-10-31 22:02:57"
+    },
+    "protocolos": {
+      "tcp": 811
+    },
+    "aplicaciones": {
+      "Trafico_TCP_Desconocido": 811
+    },
+    "acciones": {
+      "permitido": 811
+    },
+    "destinos": {
+      "hacia_10_10_100_30_central": 0,
+      "hacia_186_46_219_18_externa": 1,
+      "hacia_otras_ips_internas": 810,
+      "destinos_unicos_totales": 811,
+      "destinos_ip_sin_puntos": 0
+    },
+    "origenes": {
+      "ips_origen_unicas": 811,
+      "ips_subred_10_10_100_x": 1,
+      "actor_tokens_unicos": 532,
+      "actor_incident_D_presente": true,
+      "ocurrencias_actor_incident_D_en_8443": 1,
+      "top_5_actores_en_8443": [
+        {
+          "actor_token": "USR-94BCFF255839",
+          "eventos": 6
+        },
+        {
+          "actor_token": "USR-E312A2D37A8E",
+          "eventos": 4
+        },
+        {
+          "actor_token": "USR-6144B6F7EF22",
+          "eventos": 4
+        },
+        {
+          "actor_token": "USR-87AA3A213BC9",
+          "eventos": 4
+        },
+        {
+          "actor_token": "USR-C0A2EEC3D1CC",
+          "eventos": 4
+        }
+      ]
+    },
+    "cruce_con_canal_ssh_826": {
+      "actores_compartidos_8443_y_ssh": 310,
+      "ips_origen_compartidas_8443_y_ssh": 1,
+      "evaluacion_hipotesis_005_a_001": "Solo 1 registro de 8443/tcp (actor e IP del Incidente D) apunta a 186.46.219.18; el resto del tráfico 8443/tcp se distribuye en usuarios e IPs internas sin concentración en la subred 10.10.100.x."
+    }
+  },
+  "verificacion_5_incidentes": {
+    "incidente_A_telnet_brute_force": {
+      "actor_token": "USR-5387F94B394C",
+      "account_token": "ACC-410762D420CB",
+      "fw_ip_origen": "10.10.100.10",
+      "fw_puerto": 23,
+      "fw_conexiones_negadas_ventana": 2000,
+      "med_eventos_acceso_fallido_ventana": 2000
+    },
+    "incidente_B_escaneo_multiservicio_y_spraying": {
+      "actor_token": "USR-936EFE804AB3",
+      "account_token": "ACC-A9764DFB78FE",
+      "fw_ip_origen": "10.10.100.20",
+      "fw_bloques_negados_por_puerto": [
+        {
+          "puerto": 137,
+          "protocolo": "udp",
+          "aplicacion": "Resolucion_Nombres_NetBIOS",
+          "eventos": 250
+        },
+        {
+          "puerto": 445,
+          "protocolo": "tcp",
+          "aplicacion": "Comparticion_Archivos_SMBv1",
+          "eventos": 250
+        },
+        {
+          "puerto": 3389,
+          "protocolo": "tcp",
+          "aplicacion": "Sesion_Incompleta",
+          "eventos": 250
+        },
+        {
+          "puerto": 8471,
+          "protocolo": "tcp",
+          "aplicacion": "Base_Datos",
+          "eventos": 250
+        }
+      ],
+      "med_account_desglose": [
+        {
+          "en_ventana_incidente": false,
+          "accion": "ACCESO FALLIDO",
+          "eventos": 76
+        },
+        {
+          "en_ventana_incidente": false,
+          "accion": "INGRESO SIST_MED_IESS",
+          "eventos": 42
+        },
+        {
+          "en_ventana_incidente": true,
+          "accion": "ACCESO FALLIDO",
+          "eventos": 1000
+        }
+      ]
+    },
+    "incidente_C_exfiltracion_protocolo_ssh": {
+      "actor_token": "USR-000DE3FE2773",
+      "account_token": "ACC-79FE100B6B16",
+      "fw_ip_origen": "10.10.100.50",
+      "fw_protocolo_ssh_filas": 30,
+      "med_transferencias": {
+        "TRANFERENCIA EXITOSA": 30,
+        "TRANFERENCIA INTERRUMPIDA": 2970
+      }
+    },
+    "incidente_D_exfiltracion_8443_desfase_12h": {
+      "actor_token": "USR-D21470F4ED35",
+      "account_token": "ACC-DC30A0D39E5A",
+      "fw_ip_origen": "10.10.100.40",
+      "fw_eventos_ventana_22_40": [
+        {
+          "ts": "2026-10-24 22:40:00",
+          "dst_ip": "10.10.100.30",
+          "puerto": 22,
+          "aplicacion": "SSH",
+          "accion": "permitido"
+        },
+        {
+          "ts": "2026-10-24 22:40:30",
+          "dst_ip": "186.46.219.18",
+          "puerto": 8443,
+          "aplicacion": "Trafico_TCP_Desconocido",
+          "accion": "permitido"
+        }
+      ],
+      "med_eventos_account": [
+        {
+          "fecha": "20261024",
+          "hora": "10:40:00",
+          "accion": "INGRESO SIST_MED_IESS",
+          "conn_ip": "10.10.100.30"
+        },
+        {
+          "fecha": "20261024",
+          "hora": "10:40:15",
+          "accion": "DESCARGA EXITOSA",
+          "conn_ip": "10.10.100.30"
+        }
+      ],
+      "desfase_horario_detectado_horas": 12,
+      "clock_skew_12h_fix_requerido": true
+    },
+    "incidente_E_ssh_y_abuso_cuentas_especiales": {
+      "fw_aplicacion_ssh_filas": 826,
+      "fw_puerto_8443_filas": 811,
+      "med_reactivaciones_cuenta_espejo_token": "ACC-877CD64A4EC0",
+      "med_reactivaciones_cuenta_espejo_conteo": 826,
+      "med_cuenta_nivel_token": "ACC-4ED6B617541D",
+      "med_cuenta_nivel_filas": 249,
+      "med_cuenta_activacion_token": "ACC-16A5FAA35471",
+      "med_cuenta_activacion_filas": 1098,
+      "resumen_16_cuentas_especiales_tokenizadas": {
+        "ACC-CCABDA8231E1": {
+          "total_filas": 476,
+          "acciones": {
+            "Reactivacion de usuarios": 220,
+            "Inactivacion de usuarios": 256
+          },
+          "dotless_ips": 45
+        },
+        "ACC-4ED6B617541D": {
+          "total_filas": 249,
+          "acciones": {
+            "USUARIOS - Actualizar nivel de Usuario": 131,
+            "Reactivacion de usuarios": 118
+          },
+          "dotless_ips": 22
+        },
+        "ACC-16A5FAA35471": {
+          "total_filas": 1098,
+          "acciones": {
+            "USUARIOS - Activar usuario": 1098
+          },
+          "dotless_ips": 100
+        },
+        "ACC-877CD64A4EC0": {
+          "total_filas": 1533,
+          "acciones": {
+            "Reactivacion de usuarios": 826,
+            "Inactivacion de usuarios": 707
+          },
+          "dotless_ips": 137
+        },
+        "ACC-69C5B524099D": {
+          "total_filas": 246,
+          "acciones": {
+            "Inactivacion de usuarios": 126,
+            "Reactivacion de usuarios": 120
+          },
+          "dotless_ips": 21
+        },
+        "ACC-7DE8F669601E": {
+          "total_filas": 741,
+          "acciones": {
+            "Inactivacion de usuarios": 356,
+            "Reactivacion de usuarios": 385
+          },
+          "dotless_ips": 67
+        },
+        "ACC-0639B2D753A4": {
+          "total_filas": 1929,
+          "acciones": {
+            "Reactivacion de usuarios": 954,
+            "Inactivacion de usuarios": 975
+          },
+          "dotless_ips": 186
+        },
+        "ACC-CAEF7516B5C5": {
+          "total_filas": 335,
+          "acciones": {
+            "Inactivacion de usuarios": 215,
+            "Reactivacion de usuarios": 120
+          },
+          "dotless_ips": 29
+        },
+        "ACC-47DB66623372": {
+          "total_filas": 708,
+          "acciones": {
+            "Reactivacion de usuarios": 349,
+            "Inactivacion de usuarios": 359
+          },
+          "dotless_ips": 66
+        },
+        "ACC-2CF46526E77B": {
+          "total_filas": 108,
+          "acciones": {
+            "Inactivacion de usuarios": 108
+          },
+          "dotless_ips": 15
+        },
+        "ACC-4F8BEF63C78C": {
+          "total_filas": 733,
+          "acciones": {
+            "Reactivacion de usuarios": 355,
+            "Inactivacion de usuarios": 378
+          },
+          "dotless_ips": 64
+        },
+        "ACC-1B3035A0DF46": {
+          "total_filas": 225,
+          "acciones": {
+            "Inactivacion de usuarios": 107,
+            "Reactivacion de usuarios": 118
+          },
+          "dotless_ips": 24
+        },
+        "ACC-A9764DFB78FE": {
+          "total_filas": 1118,
+          "acciones": {
+            "ACCESO FALLIDO": 1076,
+            "INGRESO SIST_MED_IESS": 42
+          },
+          "dotless_ips": 11
+        },
+        "ACC-410762D420CB": {
+          "total_filas": 2000,
+          "acciones": {
+            "ACCESO FALLIDO": 2000
+          },
+          "dotless_ips": 0
+        },
+        "ACC-DC30A0D39E5A": {
+          "total_filas": 2,
+          "acciones": {
+            "INGRESO SIST_MED_IESS": 1,
+            "DESCARGA EXITOSA": 1
+          },
+          "dotless_ips": 0
+        },
+        "ACC-79FE100B6B16": {
+          "total_filas": 3000,
+          "acciones": {
+            "TRANFERENCIA EXITOSA": 30,
+            "TRANFERENCIA INTERRUMPIDA": 2970
+          },
+          "dotless_ips": 0
+        }
+      }
+    }
+  }
+}
