@@ -187,6 +187,7 @@ GRANT USAGE ON SCHEMA cti_audit TO :"app_user";
 
 -- Permisos operativos sobre el esquema analítico cti_core
 GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA cti_core TO :"app_user";
+REVOKE ALL PRIVILEGES ON TABLE cti_core.account_vault FROM :"app_user", PUBLIC;
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA cti_core TO :"app_user";
 
 -- Inmutabilidad estricta sobre auditoría: solo SELECT e INSERT (prohibido UPDATE/DELETE)

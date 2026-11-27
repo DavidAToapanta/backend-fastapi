@@ -1,11 +1,32 @@
+from typing import Literal
+
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import Response
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
-from app.cti_exports.pdf_compiler import preparar_datos_de_ejemplo, renderizar_pdf
+from app.cti_exports.pdf_compiler import Audiencia
+from app.servicios.auditoria import AuditoriaNoDisponible
+from app.servicios.campanas import CampanasNoDisponibles
+from app.servicios.conclusiones import DatosF11NoDisponibles
 from app.servicios.estado import consultar_estado_servicios
+from app.servicios.exportaciones import ExportacionNoDisponible
+from app.servicios.panel import PanelNoDisponible
+from app.servicios.reporte_f11 import generar_reporte_auditado
 
 rutas = APIRouter()
+
+
+class SolicitudReporte(BaseModel):
+    audience: Audiencia = "technical"
+    format: Literal["F-11", "EJECUTIVO_MEDICO"] | None = None
+    summary: str | None = Field(default=None, description="Nota opcional que se imprime solo en el F-11.")
+
+    @model_validator(mode="after")
+    def validar_formato(self):
+        esperado = "F-11" if self.audience == "technical" else "EJECUTIVO_MEDICO"
+        if self.format is not None and self.format != esperado:
+            raise ValueError(f"El formato para {self.audience} debe ser {esperado}.")
+        return self
 
 
 class RespuestaEstado(BaseModel):
@@ -36,24 +57,30 @@ def consultar_estado() -> RespuestaEstado:
 
 @rutas.post(
     "/api/v1/reports/generate-pdf",
-    summary="Descargar el borrador del reporte F-11",
+    summary="Descargar el reporte técnico o médico auditado",
     response_class=Response,
     responses={
         200: {"content": {"application/pdf": {"schema": {"type": "string", "format": "binary"}}}},
-        503: {"description": "Motor PDF no disponible"},
+        503: {"description": "Evidencias, caché, auditoría o motor PDF no disponibles"},
     },
 )
-def descargar_borrador_f11() -> Response:
+def descargar_reporte_f11(solicitud: SolicitudReporte | None = None) -> Response:
+    opciones = solicitud or SolicitudReporte()
     try:
-        contenido = renderizar_pdf(preparar_datos_de_ejemplo())
-    except (ImportError, OSError) as error:
-        raise HTTPException(status_code=503, detail="El motor de PDF no está disponible.") from error
+        contenido, nombre, audit_id, sha256 = generar_reporte_auditado(opciones.audience, opciones.summary)
+    except (DatosF11NoDisponibles, PanelNoDisponible, CampanasNoDisponibles, ExportacionNoDisponible,
+            AuditoriaNoDisponible, ImportError, OSError, KeyError, ValueError) as error:
+        raise HTTPException(
+            status_code=503, detail="No se pudo generar y auditar el reporte solicitado.",
+        ) from error
 
     return Response(
         content=contenido,
         media_type="application/pdf",
         headers={
-            "Content-Disposition": 'attachment; filename="Reporte_CTI_F11_AegisHealth_borrador.pdf"',
+            "Content-Disposition": f'attachment; filename="{nombre}"',
             "Cache-Control": "no-store",
+            "X-Audit-Id": str(audit_id),
+            "X-Report-SHA256": sha256,
         },
     )

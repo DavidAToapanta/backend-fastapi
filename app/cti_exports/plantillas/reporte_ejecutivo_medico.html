@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Continuidad hospitalaria | Dirección Médica</title>
+  <style>
+    @page { size: A4; margin: 20mm;
+      @bottom-left { content: "AegisHealth  ·  Dirección Médica"; color: #465c65; font-size: 9pt; }
+      @bottom-right { content: counter(page) " / " counter(pages); color: #465c65; font-size: 9pt; }
+    }
+    body { margin: 0; font: 11pt/1.5 "DejaVu Sans", sans-serif; color: #18333a; }
+    header { border-top: 2mm solid #19665c; padding-top: 4mm; }
+    header p { color: #245e57; font-weight: bold; }
+    h1 { font-size: 26pt; line-height: 1.1; margin: 2mm 0 7mm; }
+    h2 { font-size: 14pt; line-height: 1.2; margin: 7mm 0 2mm; }
+    p { margin: 0 0 2mm; }
+    .estado { background: #fff3cf; border-left: 1.6mm solid #987013; padding: 4mm; }
+    .estado h2 { margin: 0 0 2mm; }
+    ol { margin: 0; padding-left: 7mm; }
+    li { margin-bottom: 2.5mm; padding-left: 1mm; }
+    footer { border-top: .3mm solid #b6c8c6; margin-top: 6mm; }
+    footer h2 { margin-top: 3mm; }
+  </style>
+</head>
+<body>
+  <header>
+    <p>Dirección Médica · Ejercicio simulado de octubre de 2026</p>
+    <h1>Continuidad hospitalaria</h1>
+  </header>
+  <section class="estado">
+    <h2>Semáforo de continuidad hospitalaria · Amarillo</h2>
+    <p>Se recomienda vigilancia. Falta confirmar con las jefaturas si algún
+      servicio tuvo demoras o dificultades para consultar historias clínicas.</p>
+  </section>
+  <section>
+    <h2>Hallazgos del ejercicio</h2>
+    <p>La revisión abarca {{ cuentas }} cuentas administrativas. Se observaron
+      reactivaciones de cuentas y cambios de permisos que requieren cotejo con
+      las funciones y los turnos autorizados.</p>
+    <p>El 24 de octubre se registró una descarga fuera de turno. Queda por
+      confirmar si estaba autorizada y qué información comprendía.</p>
+  </section>
+  <section>
+    <h2>Plan de acción con Talento Humano</h2>
+    <ol>
+      <li><strong>Hoy.</strong> Dirección Médica consultará a las jefaturas de turno
+        si hubo demoras y acordará cómo mantener la atención si falla el acceso
+        a las historias clínicas.</li>
+      <li><strong>En 48 horas.</strong> Talento Humano y las jefaturas cotejarán
+        los turnos y permisos de las {{ cuentas }} cuentas y verificarán si la
+        descarga del 24 de octubre tenía autorización.</li>
+      <li><strong>En una semana.</strong> Dirección Médica, Talento Humano y Sistemas
+        ajustarán los permisos que correspondan y dejarán constancia de los
+        cambios y de su efecto en la atención.</li>
+    </ol>
+  </section>
+  <footer>
+    <h2>Protección de datos de salud</h2>
+    <p>El artículo 25 de la Ley Orgánica de Protección de Datos Personales
+      (LOPDP) reconoce los datos de salud como categoría especial. Este informe
+      presenta hallazgos agrupados y preserva la identidad de pacientes y personal.</p>
+  </footer>
+</body>
+</html>

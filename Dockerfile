@@ -14,5 +14,7 @@ COPY requirements.txt .
 RUN python -m pip install --no-cache-dir -r requirements.txt
 
 COPY app ./app
+COPY docs/evidencias/evidencias.json ./docs/evidencias/evidencias.json
+COPY backend/app/core/security.py ./backend/app/core/security.py
 
 CMD ["python", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

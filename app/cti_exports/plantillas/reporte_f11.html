@@ -8,7 +8,7 @@
       size: A4;
       margin: 17mm 18mm 18mm;
       @bottom-left {
-        content: "AegisHealth-CTI  ·  Borrador con datos ficticios";
+        content: "AegisHealth-CTI  ·  Ejercicio sintético";
         color: #415866;
         font-size: 8pt;
       }
@@ -89,19 +89,26 @@
       border-bottom: .7mm solid #146659;
     }
     .etiqueta { font-weight: bold; color: #124f49; }
+    .huella { font: 8pt/1.4 "DejaVu Sans Mono", monospace; overflow-wrap: anywhere; }
+    figure { margin: 3mm 0; break-inside: avoid; }
+    figure img { display: block; width: 100%; }
+    figcaption { color: #415866; font-size: 8.5pt; }
   </style>
 </head>
 <body>
   <main>
     <div class="pagina">
       <header class="portada">
-        <div class="linea-ficha">AegisHealth-CTI / Ficha F-11</div>
-        <div class="borrador">Borrador · Datos ficticios</div>
+        <div class="linea-ficha">AegisHealth-CTI / Ficha F-11 · TLP:RED</div>
+        <div class="borrador">{{ estado | default("Borrador · Datos ficticios") }}</div>
         <h1>Reporte de inteligencia de amenazas</h1>
         <p>{{ resumen }}</p>
+        {% if nota_solicitante | default(none) %}
+        <p><span class="etiqueta">Nota del solicitante</span> {{ nota_solicitante }}</p>
+        {% endif %}
       </header>
 
-      <table class="indicadores" aria-label="Indicadores del borrador">
+      <table class="indicadores" aria-label="Indicadores del ejercicio">
         <tr>
         {% for cifra, nombre in indicadores %}
           <td><strong>{{ cifra }}</strong><span>{{ nombre }}</span></td>
@@ -113,10 +120,10 @@
         <h2>1. Fuentes y metodología</h2>
         <p>{{ metodologia }}</p>
         <table class="tabla">
-          <thead><tr><th>Fuente de ejemplo</th><th>Registros</th><th>Uso en el análisis</th></tr></thead>
+          <thead><tr><th>Fuente</th><th>Registros</th><th>{{ "SHA-256 de la ingesta" if estado is defined else "Uso en el análisis" }}</th></tr></thead>
           <tbody>
           {% for fuente, registros, uso in fuentes %}
-            <tr><td>{{ fuente }}</td><td>{{ registros }}</td><td>{{ uso }}</td></tr>
+            <tr><td>{{ fuente }}</td><td>{{ registros }}</td><td{% if estado is defined %} class="huella"{% endif %}>{{ uso }}</td></tr>
           {% endfor %}
           </tbody>
         </table>
@@ -139,7 +146,7 @@
 
       <section>
         <h2>4. Inteligencia táctica</h2>
-        <p>Las técnicas siguientes ilustran cómo se vinculará cada observación con MITRE ATT&amp;CK.</p>
+        <p>Técnicas MITRE ATT&amp;CK registradas para las campañas del ejercicio.</p>
         <table class="tabla">
           <thead><tr><th>Técnica</th><th>Comportamiento simulado</th></tr></thead>
           <tbody>
@@ -153,22 +160,51 @@
       <section>
         <h2>5. Inteligencia operativa</h2>
         <table class="tabla">
-          <thead><tr><th>Campaña</th><th>Ventana ilustrativa</th><th>Hallazgo</th></tr></thead>
+          <thead><tr><th>Campaña</th><th>{{ "Admiralty" if estado is defined else "Ventana ilustrativa" }}</th><th>Hallazgo</th></tr></thead>
           <tbody>
           {% for codigo, ventana, hallazgo in campanas %}
             <tr><td>{{ codigo }}</td><td>{{ ventana }}</td><td>{{ hallazgo }}</td></tr>
           {% endfor %}
           </tbody>
         </table>
-        <p>{{ nota_temporal }}</p>
       </section>
-
+      {% if grafico_horario is defined %}
+    </div>
+    <div class="pagina">
+      <div class="linea-ficha encabezado-pagina">AegisHealth-CTI / Ficha F-11</div>
+      <section>
+        <h3>Cronología CAMP-2026-001</h3>
+        <p>{{ nota_temporal }}</p>
+        <table class="tabla">
+          <thead><tr><th>Fecha y hora</th><th>Fuente</th><th>Ajuste +12 h</th></tr></thead>
+          <tbody>
+          {% for fecha, fuente, ajuste in cronologia %}
+            <tr><td>{{ fecha }}</td><td>{{ fuente }}</td><td>{{ ajuste }}</td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        <figure>
+          <img src="{{ grafico_horario }}" alt="Mapa horario de eventos por día y hora UTC">
+          <figcaption>Actividad por día y hora según los agregados de PostgreSQL.</figcaption>
+        </figure>
+      </section>
+      {% else %}
+      <p>{{ nota_temporal }}</p>
+      {% endif %}
       <section>
         <h2>6. Inteligencia técnica</h2>
         <p><span class="etiqueta">IoA</span> {{ comportamiento_observable }}</p>
         <p><span class="etiqueta">IoC</span> {{ indicador_compromiso }}</p>
+        {% if estado is defined %}
+        <p>Destino externo del caso 001 en el ejercicio: 186.46.219[.]18.</p>
+        {% endif %}
         <p>{{ metricas }}</p>
         <p class="nota">{{ exportaciones }}</p>
+        {% if muestra_sigma is defined %}
+        {% for grupo, regla in muestra_sigma %}
+        <p><span class="etiqueta">Ejemplo Sigma {{ grupo }}</span> {{ regla }}</p>
+        {% endfor %}
+        {% endif %}
       </section>
     </div>
 
@@ -178,6 +214,11 @@
       <section>
         <h2>7. Evaluación de escenarios (IPE)</h2>
         <p>{{ alcance_ipe }}</p>
+        {% if grafico_ipe is defined %}
+        <figure>
+          <img src="{{ grafico_ipe }}" alt="Matriz cualitativa de probabilidad e impacto">
+        </figure>
+        {% endif %}
         <table class="tabla">
           <thead>
             <tr><th>Escenario</th><th>Probabilidad</th><th>Impacto</th><th>Descripción</th></tr>
@@ -205,6 +246,9 @@
           </tbody>
         </table>
         <p class="nota">{{ estado_evidencias }}</p>
+        {% if huella_insumos is defined %}
+        <p>Sello SHA-256 de los insumos<br><span class="huella">{{ huella_insumos }}</span></p>
+        {% endif %}
       </section>
     </div>
   </main>

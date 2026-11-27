@@ -1,0 +1,32 @@
+services:
+  misp-nginx:
+    ports: !override
+      - "127.0.0.1:8443:8443"
+    networks:
+      - default
+      - entrada_local
+    restart: unless-stopped
+  misp-core:
+    restart: unless-stopped
+    # Mantiene la copia inicial de los catálogos dentro del disco Linux de Docker.
+    volumes:
+      - misp_app_files:/var/www/MISP/app/files
+    healthcheck:
+      start_period: 5m
+  misp-modules:
+    restart: unless-stopped
+  db:
+    restart: unless-stopped
+  redis:
+    restart: unless-stopped
+  mail:
+    restart: unless-stopped
+
+networks:
+  default:
+    internal: true
+  # Docker no publica puertos de contenedores conectados solo a redes internas.
+  entrada_local: {}
+
+volumes:
+  misp_app_files:

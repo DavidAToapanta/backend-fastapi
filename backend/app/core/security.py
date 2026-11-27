@@ -245,7 +245,8 @@ def registrar_evento_auditoria(
         metadata=meta_normalizada,
     )
 
-    with conn.cursor() as cur:
+    with conn.transaction(), conn.cursor() as cur:
+        cur.execute("SELECT pg_advisory_xact_lock('cti_audit.audit_events'::regclass::oid::bigint)")
         cur.execute(
             "SELECT row_hash FROM cti_audit.audit_events ORDER BY audit_id DESC LIMIT 1"
         )

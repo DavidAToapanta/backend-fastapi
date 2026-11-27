@@ -2,9 +2,16 @@
 
 import argparse
 from pathlib import Path
+from typing import Literal
+
+Audiencia = Literal["technical", "medical"]
+PLANTILLAS = {
+    "technical": "reporte_f11.html",
+    "medical": "reporte_ejecutivo_medico.html",
+}
 
 
-def renderizar_pdf(datos: dict[str, object]) -> bytes:
+def renderizar_pdf(datos: dict[str, object], audiencia: Audiencia = "technical") -> bytes:
     """Renderiza el reporte para devolverlo por HTTP o guardarlo en disco."""
     from jinja2 import Environment, FileSystemLoader, StrictUndefined, select_autoescape
     from weasyprint import HTML
@@ -14,7 +21,7 @@ def renderizar_pdf(datos: dict[str, object]) -> bytes:
         autoescape=select_autoescape(("html",)),
         undefined=StrictUndefined,
     )
-    documento = entorno.get_template("reporte_f11.html").render(**datos)
+    documento = entorno.get_template(PLANTILLAS[audiencia]).render(**datos)
     return HTML(string=documento).write_pdf()
 
 

@@ -264,6 +264,15 @@ def test_gate_privacidad_postgresql_tablas_publicas_y_vault() -> None:
                         f"Fuga LOPDP en tabla {tabla}: apareció {cadena!r}"
                     )
 
+            cur.execute("""
+                SELECT has_column_privilege('cti_core.account_vault', 'account_token', 'SELECT'),
+                       has_column_privilege('cti_core.account_vault', 'system_account_id', 'SELECT')
+            """)
+            assert cur.fetchone() == (False, False)
+
+    with obtener_conexion(settings=cfg) as conn:
+        with conn.cursor() as cur:
+            cur.execute("SET LOCAL ROLE aegis_break_glass")
             cur.execute("SELECT account_token, system_account_id FROM cti_core.account_vault")
             vault_filas = cur.fetchall()
             assert len(vault_filas) == 16
