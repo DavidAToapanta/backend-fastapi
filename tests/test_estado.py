@@ -4,7 +4,10 @@ from unittest.mock import patch
 
 import psycopg
 from fastapi.testclient import TestClient
+from psycopg.conninfo import conninfo_to_dict
 
+from app.core.conexion_postgres import conectar_postgres
+from app.core.configuracion_servicios import url_ollama
 from app.main import app
 
 
@@ -86,9 +89,25 @@ class PruebasEstado(unittest.TestCase):
                 conexion_ollama.request.assert_called_once_with("GET", "/api/tags")
                 conectar_tcp.assert_called_once_with(("1.1.1.1", 443), timeout=1.0)
 
+    def test_venv_usa_la_cuenta_de_aplicacion_y_ollama_local(self):
+        entorno = {"POSTGRES_DB": "pruebas", "POSTGRES_APP_USER": "app",
+                   "POSTGRES_APP_PASSWORD": "una clave", "POSTGRES_USER": "admin"}
+        with (
+            patch.dict(os.environ, {}, clear=True),
+            patch("app.core.configuracion_servicios._entorno_local", entorno),
+            patch("app.core.conexion_postgres.psycopg.connect") as conectar,
+        ):
+            conectar_postgres()
+            self.assertEqual(conninfo_to_dict(conectar.call_args.args[0]), {
+                "dbname": "pruebas", "user": "app", "password": "una clave",
+                "host": "127.0.0.1", "port": "5434",
+            })
+            self.assertEqual(url_ollama(), "http://127.0.0.1:11434")
+
     def test_sin_configuracion_omite_las_conexiones_a_servicios(self):
         with (
-            patch.dict(os.environ, {"DATABASE_URL": "", "OLLAMA_BASE_URL": ""}),
+            patch.dict(os.environ, {"OLLAMA_BASE_URL": ""}, clear=True),
+            patch("app.core.configuracion_servicios._entorno_local", {}),
             patch("app.core.estado_postgres.psycopg.connect") as conectar_postgres,
             patch("app.llm.estado_ollama.HTTPConnection") as conectar_ollama,
             patch("app.servicios.estado.create_connection", side_effect=ConnectionRefusedError),

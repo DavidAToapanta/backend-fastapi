@@ -1,11 +1,12 @@
 import json
-import os
 from contextlib import closing
 from http.client import HTTPConnection, HTTPException
 from typing import Literal
 from urllib.parse import urlsplit
 
 from pydantic import BaseModel, ConfigDict, Field
+
+from app.core.configuracion_servicios import url_ollama, valor_configurado
 
 MODELO_POR_DEFECTO = "qwen3:4b"
 LIMITE_RESPUESTA = 64 * 1024
@@ -75,7 +76,7 @@ def generar_conclusiones(hechos: dict[str, int]) -> str:
 
     esquema = EnfoqueConclusiones.model_json_schema()
     solicitud = {
-        "model": os.getenv("OLLAMA_MODEL", MODELO_POR_DEFECTO),
+        "model": valor_configurado("OLLAMA_MODEL", MODELO_POR_DEFECTO),
         "stream": False,
         "think": False,
         "format": esquema,
@@ -90,7 +91,7 @@ def generar_conclusiones(hechos: dict[str, int]) -> str:
     }
 
     try:
-        url = urlsplit(os.getenv("OLLAMA_BASE_URL", "").strip())
+        url = urlsplit(url_ollama())
         if (
             url.scheme != "http"
             or url.hostname not in {"localhost", "127.0.0.1", "::1", "host.docker.internal"}

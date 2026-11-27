@@ -1,5 +1,4 @@
 import json
-import os
 from datetime import date, timedelta
 from pathlib import Path
 from typing import Any
@@ -8,6 +7,7 @@ import psycopg
 from pydantic import BaseModel, Field
 
 from app.core.conexion_postgres import conectar_postgres
+from app.servicios.exportaciones import carpeta_exportaciones
 
 FUENTES = ("FIREWALL", "MEDSYS")
 
@@ -102,7 +102,7 @@ def consultar_resumen_panel() -> dict[str, object]:
     elif all(evidencia is True for evidencia in evidencias):
         seudonimizacion = True
 
-    carpeta_metricas = Path(os.getenv("METRICAS_ML_DIR", "data/exports"))
+    carpeta_metricas = carpeta_exportaciones()
     return {
         "total_eventos": eventos,
         "ips_sin_puntos": ips,

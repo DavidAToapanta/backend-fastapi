@@ -1,11 +1,10 @@
 import json
-import os
-from pathlib import Path
 
 import psycopg
 from psycopg.rows import dict_row
 
 from app.core.conexion_postgres import conectar_postgres
+from app.servicios.exportaciones import carpeta_exportaciones
 
 CONSULTA_CAMPANAS = """
 SELECT campaign_code AS codigo,
@@ -64,7 +63,7 @@ class CampanasNoDisponibles(Exception):
 
 
 def leer_puntajes_ml() -> dict[str, float]:
-    ruta = Path(os.getenv("METRICAS_ML_DIR", "data/exports")) / "campanas.json"
+    ruta = carpeta_exportaciones() / "campanas.json"
     try:
         datos = json.loads(ruta.read_text(encoding="utf-8-sig"))
     except (OSError, ValueError):

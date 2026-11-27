@@ -1,13 +1,14 @@
 import json
-import os
 from contextlib import closing
 from http.client import HTTPConnection, HTTPException, HTTPSConnection
 from urllib.parse import urlsplit
 
+from app.core.configuracion_servicios import url_ollama
+
 
 def comprobar_ollama() -> bool:
     """Comprueba que el servidor local responde con su catálogo de modelos."""
-    url_base = os.getenv("OLLAMA_BASE_URL", "").strip()
+    url_base = url_ollama()
     if not url_base:
         return False
 

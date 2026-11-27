@@ -1,8 +1,9 @@
 import json
-import os
 from pathlib import Path
 
 import yaml
+
+from app.core.configuracion_servicios import valor_configurado
 
 NOMBRE_PAQUETE_STIX = "aegishealth_stix21_bundle.json"
 ETIQUETAS_SINTETICAS = ("synthetic-exercise-data", "hackathon-simulation")
@@ -13,7 +14,15 @@ class ExportacionNoDisponible(Exception):
 
 
 def carpeta_exportaciones() -> Path:
-    return Path(os.getenv("METRICAS_ML_DIR", "data/exports"))
+    raiz = Path(__file__).resolve().parents[2]
+    ruta_runtime = valor_configurado("METRICAS_ML_DIR").strip()
+    if ruta_runtime:
+        return raiz / ruta_runtime
+    # Compose interpreta su ruta de montaje relativa al directorio infra.
+    ruta_host = valor_configurado("METRICAS_ML_DIR_HOST").strip()
+    if ruta_host:
+        return raiz / "infra" / ruta_host
+    return raiz / "data" / "exports"
 
 
 def leer_reglas_sigma() -> dict[str, list[dict[str, str]]]:

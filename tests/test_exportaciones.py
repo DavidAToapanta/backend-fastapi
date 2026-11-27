@@ -8,6 +8,18 @@ from unittest.mock import patch
 from fastapi.testclient import TestClient
 
 from app.main import app
+from app.servicios.exportaciones import carpeta_exportaciones
+
+
+def test_resuelve_montaje_host_y_prioriza_directorio_runtime():
+    raiz = Path(__file__).resolve().parents[1]
+    with (
+        patch.dict(os.environ, {}, clear=True),
+        patch("app.core.configuracion_servicios._entorno_local", {"METRICAS_ML_DIR_HOST": "../datos-rol2"}),
+    ):
+        assert carpeta_exportaciones().resolve() == raiz / "datos-rol2"
+        with patch.dict(os.environ, {"METRICAS_ML_DIR": "data/pruebas"}):
+            assert carpeta_exportaciones() == raiz / "data" / "pruebas"
 
 
 class PruebasExportaciones(unittest.TestCase):

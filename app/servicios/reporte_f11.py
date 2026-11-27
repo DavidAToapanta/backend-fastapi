@@ -1,6 +1,5 @@
 import hashlib
 import json
-import os
 import re
 from datetime import timedelta
 from pathlib import Path
@@ -32,7 +31,7 @@ from app.cti_exports.pdf_compiler import Audiencia, renderizar_pdf
 from app.servicios.auditoria import AuditoriaNoDisponible, comprobar_cadena_auditoria, listar_eventos_auditoria
 from app.servicios.campanas import ESCENARIOS_IPE, consultar_campanas, consultar_linea_tiempo
 from app.servicios.conclusiones import DatosF11NoDisponibles, hechos_para_conclusiones
-from app.servicios.exportaciones import leer_paquete_stix, leer_reglas_sigma
+from app.servicios.exportaciones import carpeta_exportaciones, leer_paquete_stix, leer_reglas_sigma
 from app.servicios.panel import consultar_mapa_horario, consultar_resumen_panel
 from backend.app.core.security import registrar_evento_auditoria
 
@@ -55,7 +54,7 @@ def defang_ips(texto: str) -> str:
 
 
 def _leer_json_opcional(nombre: str) -> dict | None:
-    ruta = Path(os.getenv("METRICAS_ML_DIR", "data/exports")) / nombre
+    ruta = carpeta_exportaciones() / nombre
     try:
         datos = json.loads(ruta.read_text(encoding="utf-8-sig"))
         return datos if isinstance(datos, dict) else None
