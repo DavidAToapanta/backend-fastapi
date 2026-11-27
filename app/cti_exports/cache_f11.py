@@ -50,7 +50,7 @@ def principal() -> None:
     from app.servicios.reporte_f11 import huella_insumos, recopilar_insumos
 
     argumentos = argparse.ArgumentParser(description="Preparar la caché local del F-11.")
-    argumentos.add_argument("--aprobar", action="store_true", help="Registrar la revisión del Rol 5.")
+    argumentos.add_argument("--aprobar", action="store_true", help="Marcar la edición técnica del informe F-11 como validada.")
     opciones = argumentos.parse_args()
     try:
         datos, mapa, hechos = recopilar_insumos()
@@ -63,7 +63,7 @@ def principal() -> None:
     except (DatosF11NoDisponibles, PanelNoDisponible, AuditoriaNoDisponible, CampanasNoDisponibles,
             ExportacionNoDisponible, OllamaNoDisponible, OSError, KeyError, ValueError):
         argumentos.exit(1, "Error al preparar la caché F-11. Revisa PostgreSQL, los insumos y Ollama.\n")
-    print(f"Caché F-11 {'revisada' if cache.revisado else 'pendiente de revisión'} en {ruta_cache()}")
+    print(f"Caché F-11 {'validada' if cache.revisado else 'generada'} en {ruta_cache()}")
 
 
 if __name__ == "__main__":

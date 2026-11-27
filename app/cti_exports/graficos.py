@@ -21,10 +21,11 @@ def dibujar_graficos(mapa: dict, escenarios: list[tuple[str, str, str, str]]) ->
         grafico = eje.imshow(mapa["matriz"], aspect="auto", cmap="YlGnBu", interpolation="nearest")
         dias = mapa["dias"]
         posiciones = list(range(0, len(dias), 5))
-        eje.set_xticks(posiciones, [dias[i].strftime("%d/%m") for i in posiciones])
+        if dias:
+            eje.set_xticks(posiciones, [dias[i].strftime("%d/%m") for i in posiciones])
         eje.set_yticks([0, 6, 12, 18, 23])
-        eje.set_xlabel("Día (UTC)")
-        eje.set_ylabel("Hora")
+        eje.set_xlabel("Día de octubre (hora local del registro)")
+        eje.set_ylabel("Hora local")
         figura.colorbar(grafico, ax=eje, label="Eventos")
         horario = como_imagen_svg(figura)
 
@@ -38,6 +39,13 @@ def dibujar_graficos(mapa: dict, escenarios: list[tuple[str, str, str, str]]) ->
         eje.axhline(0.5, color="#9cb1b5", linewidth=0.8)
         eje.axvline(0.5, color="#9cb1b5", linewidth=0.8)
         for nombre, probabilidad, impacto, _ in escenarios:
-            eje.text(impactos.index(impacto), probabilidades.index(probabilidad), nombre,
-                     ha="center", va="center", color="#124f49", fontweight="bold")
+            eje.text(
+                impactos.index(impacto),
+                probabilidades.index(probabilidad),
+                nombre,
+                ha="center",
+                va="center",
+                color="#0B5D46",
+                fontweight="bold",
+            )
         return horario, como_imagen_svg(figura)

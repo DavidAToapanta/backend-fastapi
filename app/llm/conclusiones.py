@@ -9,11 +9,26 @@ from pydantic import BaseModel, ConfigDict, Field
 
 MODELO_POR_DEFECTO = "qwen3:4b"
 LIMITE_RESPUESTA = 64 * 1024
+
 CONTROLES = {
-    "privilegios": "Prioriza la revisión de privilegios y las alertas sobre cambios de cuentas.",
-    "egreso": "Prioriza la restricción del egreso y la revisión de transferencias atípicas.",
-    "reloj": "Prioriza la sincronización de los relojes y la revisión de las correlaciones temporales.",
+    "privilegios": "Acción prioritaria: suspender cuentas compartidas y priorizar la revisión de privilegios y alertas de cuentas.",
+    "egreso": "Acción prioritaria: bloquear el egreso no autorizado y priorizar la revisión de transferencias externas atípicas.",
+    "reloj": "Acción prioritaria: priorizar la sincronización de los relojes locales y validar las correlaciones temporales.",
 }
+
+PROMPT_SISTEMA_BLUF = (
+    "Redacta usando EXCLUSIVAMENTE las cifras del JSON recibido. Empieza por la conclusión y las acciones "
+    "(pirámide invertida). Distingue hecho observado de hipótesis ('probable', 'posible'). "
+    "Si un dato no está en el JSON, escribe 'por confirmar'. No inventes cifras. "
+    "Selecciona la lectura más relevante (cobertura_ml o calidad_datos) y prioriza un control defensivo "
+    "(privilegios, egreso o reloj). Devuelve solo ese JSON."
+)
+
+PROMPT_EJECUTIVO_MEDICO = (
+    "Redacta para Dirección Médica usando EXCLUSIVAMENTE las cifras del JSON. Empieza por la conclusión "
+    "y las acciones con responsable y plazo. Prohibido usar siglas técnicas (IoC, IoA, MITRE, SSH, IP, "
+    "Sigma, STIX, HMAC). Distingue hecho confirmado de punto por confirmar. No inventes cifras."
+)
 
 
 class OllamaNoDisponible(Exception):
@@ -32,23 +47,29 @@ class EnfoqueConclusiones(BaseModel):
 
 
 def redactar_conclusion(enfoque: EnfoqueConclusiones, hechos: dict[str, int]) -> str:
+    """Compone una síntesis BLUF (acción y conclusión primero) usando solo cifras verificadas."""
+    accion = CONTROLES[enfoque.prioridad]
     if enfoque.lectura == "cobertura_ml":
         genericas = hechos["campanas_detectadas_ml_genericas"]
         dominio = hechos["campanas_detectadas_ml_dominio"]
         total = hechos["campanas_evaluadas"]
-        lectura = (
-            f"Con las variables genéricas, el modelo detectó {genericas} de {total} campañas. "
-            f"Con las variables de dominio, detectó {dominio} de {total}. "
-            "Las anomalías adicionales todavía requieren revisión."
+        respaldo = (
+            f"Conclusión operativa: es probable que el abuso de privilegios requiera contención prioritaria "
+            f"(detección ML sin reglas de {genericas} de {total} campañas en versión genérica y {dominio} de {total} "
+            "con dominio); la relación entre campañas previas y la posible salida externa sigue como hipótesis y "
+            "el resto de anomalías queda por confirmar."
         )
     else:
         conteo = f"{hechos['ips_sin_puntos']:,}".replace(",", ".")
-        lectura = f"Los registros contienen {conteo} IP sin puntos. Valida su normalización antes de correlacionar."
-    return f"{lectura} {CONTROLES[enfoque.prioridad]}"
+        respaldo = (
+            f"Conclusión de calidad y trazabilidad: se confirmaron {conteo} IP sin puntos en registros horarios "
+            "locales; su normalización es obligatoria antes de correlacionar eventos. El volumen exfiltrado sigue por confirmar."
+        )
+    return f"{accion} {respaldo}"
 
 
 def generar_conclusiones(hechos: dict[str, int]) -> str:
-    """Usa Ollama para orientar la conclusión y conserva las cifras verificadas."""
+    """Usa Ollama local para elegir prioridad BLUF y conserva cifras verificadas."""
     if any(type(valor) is not int for valor in hechos.values()):
         raise ValueError("Los hechos enviados a Ollama deben ser enteros.")
 
@@ -60,14 +81,7 @@ def generar_conclusiones(hechos: dict[str, int]) -> str:
         "format": esquema,
         "options": {"temperature": 0.1, "num_predict": 100},
         "messages": [
-            {
-                "role": "system",
-                "content": (
-                    "Para la conclusión del ejercicio CTI sintético, selecciona la lectura más "
-                    "relevante según los agregados: cobertura_ml o calidad_datos. Prioriza un "
-                    "control defensivo: privilegios, egreso o reloj. Devuelve solo ese JSON."
-                ),
-            },
+            {"role": "system", "content": PROMPT_SISTEMA_BLUF},
             {
                 "role": "user",
                 "content": f"/no_think\nHechos: {json.dumps(hechos)}\nEsquema: {json.dumps(esquema)}",
@@ -87,7 +101,8 @@ def generar_conclusiones(hechos: dict[str, int]) -> str:
             raise ValueError("Configura la dirección HTTP local de Ollama.")
         with closing(HTTPConnection(url.hostname, url.port or 11434, timeout=90)) as conexion:
             conexion.request(
-                "POST", f"{url.path.rstrip('/')}/api/chat",
+                "POST",
+                f"{url.path.rstrip('/')}/api/chat",
                 body=json.dumps(solicitud),
                 headers={"Content-Type": "application/json"},
             )
