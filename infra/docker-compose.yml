@@ -16,6 +16,7 @@ services:
       - datos_postgres:/var/lib/postgresql/data
       - ./postgres/init.sql:/docker-entrypoint-initdb.d/10-schema.sql:ro
       - ./postgres/permisos_break_glass.sql:/docker-entrypoint-initdb.d/20-break-glass.sql:ro
+      - ./postgres/guardian_centinela.sql:/docker-entrypoint-initdb.d/30-guardian-centinela.sql:ro
     healthcheck:
       test: ["CMD", "pg_isready", "-h", "127.0.0.1", "-U", "${POSTGRES_USER}", "-d", "${POSTGRES_DB}"]
       interval: 5s
@@ -41,6 +42,9 @@ services:
       LLM_CACHE_PATH: /data/cache-f11/llm_cache.json
       BREAK_GLASS_DATABASE_URL: ${BREAK_GLASS_DATABASE_URL:-}
       BREAK_GLASS_ANALYST_KEYS_JSON: ${BREAK_GLASS_ANALYST_KEYS_JSON:-}
+      AEGIS_HMAC_CLAVE: ${AEGIS_HMAC_CLAVE:-}
+      PILOTO_SESIONES_JSON: ${PILOTO_SESIONES_JSON:-}
+      PILOTO_ANALISTAS_JSON: ${PILOTO_ANALISTAS_JSON:-}
     volumes:
       - type: bind
         source: ${METRICAS_ML_DIR_HOST:-../data/exports}

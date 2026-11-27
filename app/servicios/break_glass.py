@@ -20,12 +20,14 @@ class CuentaTecnicaNoEncontrada(Exception):
     """El token no se encuentra en la bóveda."""
 
 
-def autorizar_analista(analista: str, clave: str | None) -> None:
+def autorizar_analista(
+    analista: str, clave: str | None, *, variable: str = "BREAK_GLASS_ANALYST_KEYS_JSON",
+) -> None:
     if not clave:
         raise CredencialesInvestigacionInvalidas
 
     try:
-        huellas = json.loads(os.getenv("BREAK_GLASS_ANALYST_KEYS_JSON", ""))
+        huellas = json.loads(os.getenv(variable, ""))
     except ValueError as error:
         raise AuditoriaNoDisponible from error
 

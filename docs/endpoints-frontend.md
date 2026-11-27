@@ -1,6 +1,8 @@
 # AegisHealth-CTI · Endpoints para conectar y probar el frontend
 
-**Para el Rol 4.** El backend expone 12 consultas `GET` y 3 acciones `POST`. Para probar la conexión, abrí el frontend en `http://localhost:5173` en la misma laptop que ejecuta FastAPI. Desde la consola del navegador, esta llamada debe devolver `{status: "healthy"}`:
+Las seis rutas del piloto tienen su propio contrato y recorrido de pruebas. [Centinela y Guardián](guardian-centinela-frontend.md)
+
+**Para el Rol 4.** Esta guía cubre 12 consultas `GET` y 3 acciones `POST` del módulo CTI. Para probar la conexión, abrí el frontend en `http://localhost:5173` en la misma laptop que ejecuta FastAPI. Desde la consola del navegador, esta llamada debe devolver `{status: "healthy"}`:
 
 ```js
 await (await fetch("http://127.0.0.1:8000/health")).json()

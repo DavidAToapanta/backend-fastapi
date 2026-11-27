@@ -1,0 +1,201 @@
+{
+  "_nota": "DATOS SINTETICOS de ejercicio (Hackaton IESS 2026). Los hashes usan la clave de demo 'clave-demo-solo-ejercicio'; en el sistema real la clave sale de AEGIS_HMAC_CLAVE.",
+  "escenarios": {
+    "AFI-00000000A001": "Ataque clasico vinculado a phishing -> GUARD-01 CRITICA + GUARD-02",
+    "AFI-00000000A002": "Legitimo en agencia con biometria -> GUARD-01 BAJA (solo registrar)",
+    "AFI-00000000A003": "Desvio del desembolso -> GUARD-03",
+    "AFI-00000000A004": "Aviso temprano sin prestamo -> GUARD-02",
+    "AFI-00000000A005": "Banco cerro (proceso masivo) -> sin alerta",
+    "AFI-00000000A006": "Corrige correo y pide prestamo -> sin alerta",
+    "FUN-0042": "Funcionario cambia 5 cuentas de noche -> GUARD-04"
+  },
+  "eventos": [
+    {
+      "id_evento": "EV-001",
+      "afiliado": "AFI-00000000A001",
+      "tipo": "CAMBIO_CELULAR",
+      "fecha_hora": "2026-10-24T22:00:00",
+      "canal": "APP",
+      "origen": "AFILIADO"
+    },
+    {
+      "id_evento": "EV-002",
+      "afiliado": "AFI-00000000A001",
+      "tipo": "CAMBIO_CORREO",
+      "fecha_hora": "2026-10-24T22:08:00",
+      "canal": "APP",
+      "origen": "AFILIADO"
+    },
+    {
+      "id_evento": "EV-003",
+      "afiliado": "AFI-00000000A001",
+      "tipo": "CAMBIO_CUENTA_BANCARIA",
+      "fecha_hora": "2026-10-24T22:20:00",
+      "canal": "APP",
+      "origen": "AFILIADO",
+      "valor_hash": "acbcf88003a825af4cd3c953b325189616fa083f4c08637cfb305e53a9673e8e"
+    },
+    {
+      "id_evento": "EV-004",
+      "afiliado": "AFI-00000000A001",
+      "tipo": "SOLICITUD_PRESTAMO",
+      "fecha_hora": "2026-10-24T22:40:00",
+      "canal": "APP",
+      "origen": "AFILIADO"
+    },
+    {
+      "id_evento": "EV-005",
+      "afiliado": "AFI-00000000A002",
+      "tipo": "CAMBIO_CELULAR",
+      "fecha_hora": "2026-10-12T09:15:00",
+      "canal": "AGENCIA_BIOMETRICO",
+      "origen": "FUNCIONARIO",
+      "funcionario": "FUN-0003"
+    },
+    {
+      "id_evento": "EV-006",
+      "afiliado": "AFI-00000000A002",
+      "tipo": "CAMBIO_CUENTA_BANCARIA",
+      "fecha_hora": "2026-10-12T09:20:00",
+      "canal": "AGENCIA_BIOMETRICO",
+      "origen": "FUNCIONARIO",
+      "funcionario": "FUN-0003",
+      "valor_hash": "712917492320b18f6ae9679c6efe0719f3ed83c2a9d060fe5a92b8b337187187"
+    },
+    {
+      "id_evento": "EV-007",
+      "afiliado": "AFI-00000000A002",
+      "tipo": "SOLICITUD_PRESTAMO",
+      "fecha_hora": "2026-10-12T16:00:00",
+      "canal": "WEB",
+      "origen": "AFILIADO"
+    },
+    {
+      "id_evento": "EV-008",
+      "afiliado": "AFI-00000000A003",
+      "tipo": "SOLICITUD_PRESTAMO",
+      "fecha_hora": "2026-10-15T11:00:00",
+      "canal": "WEB",
+      "origen": "AFILIADO"
+    },
+    {
+      "id_evento": "EV-009",
+      "afiliado": "AFI-00000000A003",
+      "tipo": "CAMBIO_CUENTA_BANCARIA",
+      "fecha_hora": "2026-10-15T19:30:00",
+      "canal": "WEB",
+      "origen": "AFILIADO"
+    },
+    {
+      "id_evento": "EV-010",
+      "afiliado": "AFI-00000000A004",
+      "tipo": "CAMBIO_CORREO",
+      "fecha_hora": "2026-10-20T07:00:00",
+      "canal": "WEB",
+      "origen": "AFILIADO"
+    },
+    {
+      "id_evento": "EV-011",
+      "afiliado": "AFI-00000000A004",
+      "tipo": "CAMBIO_CUENTA_BANCARIA",
+      "fecha_hora": "2026-10-20T07:45:00",
+      "canal": "WEB",
+      "origen": "AFILIADO"
+    },
+    {
+      "id_evento": "EV-012",
+      "afiliado": "AFI-00000000A005",
+      "tipo": "CAMBIO_CELULAR",
+      "fecha_hora": "2026-10-03T10:00:00",
+      "canal": "WEB",
+      "origen": "AFILIADO"
+    },
+    {
+      "id_evento": "EV-013",
+      "afiliado": "AFI-00000000A005",
+      "tipo": "CAMBIO_CUENTA_BANCARIA",
+      "fecha_hora": "2026-10-03T00:30:00",
+      "canal": "SISTEMA",
+      "origen": "PROCESO_MASIVO"
+    },
+    {
+      "id_evento": "EV-014",
+      "afiliado": "AFI-00000000A005",
+      "tipo": "SOLICITUD_PRESTAMO",
+      "fecha_hora": "2026-10-03T12:00:00",
+      "canal": "WEB",
+      "origen": "AFILIADO"
+    },
+    {
+      "id_evento": "EV-015",
+      "afiliado": "AFI-00000000A006",
+      "tipo": "CAMBIO_CORREO",
+      "fecha_hora": "2026-10-08T10:00:00",
+      "canal": "WEB",
+      "origen": "AFILIADO"
+    },
+    {
+      "id_evento": "EV-016",
+      "afiliado": "AFI-00000000A006",
+      "tipo": "SOLICITUD_PRESTAMO",
+      "fecha_hora": "2026-10-08T10:30:00",
+      "canal": "WEB",
+      "origen": "AFILIADO"
+    },
+    {
+      "id_evento": "EV-017",
+      "afiliado": "AFI-00000000B010",
+      "tipo": "CAMBIO_CUENTA_BANCARIA",
+      "fecha_hora": "2026-10-27T23:10:00",
+      "canal": "AGENCIA",
+      "origen": "FUNCIONARIO",
+      "funcionario": "FUN-0042"
+    },
+    {
+      "id_evento": "EV-018",
+      "afiliado": "AFI-00000000B011",
+      "tipo": "CAMBIO_CUENTA_BANCARIA",
+      "fecha_hora": "2026-10-27T23:17:00",
+      "canal": "AGENCIA",
+      "origen": "FUNCIONARIO",
+      "funcionario": "FUN-0042"
+    },
+    {
+      "id_evento": "EV-019",
+      "afiliado": "AFI-00000000B012",
+      "tipo": "CAMBIO_CUENTA_BANCARIA",
+      "fecha_hora": "2026-10-27T23:24:00",
+      "canal": "AGENCIA",
+      "origen": "FUNCIONARIO",
+      "funcionario": "FUN-0042"
+    },
+    {
+      "id_evento": "EV-020",
+      "afiliado": "AFI-00000000B013",
+      "tipo": "CAMBIO_CUENTA_BANCARIA",
+      "fecha_hora": "2026-10-27T23:31:00",
+      "canal": "AGENCIA",
+      "origen": "FUNCIONARIO",
+      "funcionario": "FUN-0042"
+    },
+    {
+      "id_evento": "EV-021",
+      "afiliado": "AFI-00000000B014",
+      "tipo": "CAMBIO_CUENTA_BANCARIA",
+      "fecha_hora": "2026-10-27T23:38:00",
+      "canal": "AGENCIA",
+      "origen": "FUNCIONARIO",
+      "funcionario": "FUN-0042"
+    }
+  ],
+  "reportes_phishing": [
+    {
+      "campana_id": "CEN-001",
+      "fecha_hora": "2026-10-23T18:00:00",
+      "provincia": "Pichincha",
+      "cuentas_hash": [
+        "acbcf88003a825af4cd3c953b325189616fa083f4c08637cfb305e53a9673e8e"
+      ]
+    }
+  ]
+}
