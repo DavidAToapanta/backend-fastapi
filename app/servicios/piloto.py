@@ -13,6 +13,7 @@ from app.servicios.centinela_privacidad import (
     extraer_indicadores, grupos_por_indicadores, obtener_clave, seudonimo_reportante,
 )
 from app.servicios.guardian_cuenta import PATRON_AFILIADO, PRESTAMO, evaluar_eventos
+from app.servicios.notificaciones import crear_aviso
 from backend.app.core.security import registrar_evento_auditoria
 
 
@@ -74,11 +75,13 @@ def registrar_reporte(texto, provincia, token):
         raise ReporteSinIndicadores
     huella = hashlib.sha256(json.dumps(claves).encode()).hexdigest()
     with conectar_postgres() as conn, conn.transaction(), conn.cursor(row_factory=dict_row) as cur:
+        cur.execute("SELECT pg_advisory_xact_lock('cti_piloto.reportes'::regclass::oid::bigint)")
+        reporte_id = uuid4()
         cur.execute(
             """INSERT INTO cti_piloto.reportes (id, reportante, afiliado, provincia, huella, indicadores)
                VALUES (%s, %s, %s, %s, %s, %s)
                ON CONFLICT (reportante, huella) DO NOTHING RETURNING *""",
-            (uuid4(), reportante, afiliado, provincia, huella, Jsonb(indicadores)),
+            (reporte_id, reportante, afiliado, provincia, huella, Jsonb(indicadores)),
         )
         fila = cur.fetchone()
         nuevo = fila is not None
@@ -86,6 +89,8 @@ def registrar_reporte(texto, provincia, token):
             cur.execute("SELECT * FROM cti_piloto.reportes WHERE reportante = %s AND huella = %s",
                         (reportante, huella))
             fila = cur.fetchone()
+        else:
+            notificar_umbral(conn, reporte_id)
     ind = fila["indicadores"]
     dominios = [d.replace(".", "[.]") for d in ind["dominios"]]
     return nuevo, {
@@ -97,9 +102,12 @@ def registrar_reporte(texto, provincia, token):
     }
 
 
-def leer_campanas(conn):
+def leer_campanas(conn, excluir_reporte=None):
     with conn.cursor(row_factory=dict_row) as cur:
-        cur.execute("SELECT * FROM cti_piloto.reportes ORDER BY recibido_en, id")
+        cur.execute(
+            "SELECT * FROM cti_piloto.reportes WHERE id IS DISTINCT FROM %s ORDER BY recibido_en, id",
+            (excluir_reporte,),
+        )
         grupos = grupos_por_indicadores(cur.fetchall())
     campanas, vinculos = [], []
     for miembros in grupos:
@@ -124,6 +132,26 @@ def leer_campanas(conn):
             "status": "AVISO_A_AFILIADOS" if len(reportantes) >= 3 else "EN_OBSERVACION",
         })
     return sorted(campanas, key=lambda c: (-c["reportCount"], c["campaignId"])), vinculos
+
+
+def campana_por_reporte(campanas, vinculos, reporte_id):
+    enlace = next((v for v in vinculos if v["reporte_id"] == str(reporte_id)), None)
+    if enlace:
+        return next(c for c in campanas if c["campaignId"] == enlace["campana_id"])
+    return None
+
+
+def notificar_umbral(conn, reporte_id):
+    campanas, vinculos = leer_campanas(conn)
+    actual = campana_por_reporte(campanas, vinculos, reporte_id)
+    if actual["status"] != "AVISO_A_AFILIADOS":
+        return
+
+    miembros = {v["reporte_id"] for v in vinculos if v["campana_id"] == actual["campaignId"]}
+    previas, vinculos_previos = leer_campanas(conn, excluir_reporte=reporte_id)
+    sobre_umbral = {c["campaignId"] for c in previas if c["status"] == "AVISO_A_AFILIADOS"}
+    if not any(v["campana_id"] in sobre_umbral and v["reporte_id"] in miembros for v in vinculos_previos):
+        crear_aviso(conn, "CENTINELA", reporte_id)
 
 
 def vista_alerta(alerta):
@@ -166,6 +194,9 @@ def evaluar_piloto():
             if alerta["accion"] in {"RETENER_PRESTAMO_Y_VERIFICAR", "RETENER_DESEMBOLSO"}:
                 prestamo = next(id_evento for id_evento in alerta["eventos"] if id_evento in prestamos)
                 caso_id = uuid5(NAMESPACE_URL, f"aegishealth/guardian/{alerta['regla']}/{prestamo}")
+                critico_nuevo = (alerta["regla"] == "GUARD-01" and alerta["severidad"] == "CRITICA"
+                                 and cur.execute("SELECT 1 FROM cti_piloto.casos WHERE id = %s",
+                                                 (caso_id,)).fetchone() is None)
                 cur.execute(
                     """INSERT INTO cti_piloto.casos (id, evidencia) VALUES (%s, %s)
                        ON CONFLICT (id) DO UPDATE SET evidencia = EXCLUDED.evidencia
@@ -177,6 +208,8 @@ def evaluar_piloto():
                     cur.execute("SELECT * FROM cti_piloto.casos WHERE id = %s", (caso_id,))
                     fila = cur.fetchone()
                 casos.append(vista_caso(fila))
+                if critico_nuevo:
+                    crear_aviso(conn, "GUARDIAN", caso_id)
             alertas.append({**vista, "caseId": str(caso_id) if caso_id else None})
     return {"alerts": alertas, "cases": casos, "evaluatedEvents": resultado["eventos_evaluados"],
             "ignoredEvents": resultado["eventos_ignorados"]}

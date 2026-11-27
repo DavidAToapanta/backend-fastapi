@@ -10,7 +10,7 @@ from pydantic import BaseModel, ConfigDict, StringConstraints
 from psycopg import Error as ErrorPostgres
 
 from app.core.conexion_postgres import conectar_postgres
-from app.servicios import piloto
+from app.servicios import notificaciones, piloto
 from app.servicios.auditoria import AuditoriaNoDisponible
 from app.servicios.break_glass import CredencialesInvestigacionInvalidas, autorizar_analista
 
@@ -138,6 +138,24 @@ class Evaluacion(BaseModel):
     ignoredEvents: int
 
 
+class Notificacion(BaseModel):
+    id: UUID
+    source: Literal["GUARDIAN", "CENTINELA"]
+    referenceId: UUID
+    title: str
+    createdAt: datetime
+    readAt: datetime | None
+
+
+class BandejaNotificaciones(BaseModel):
+    items: list[Notificacion]
+    unreadCount: int
+
+
+class LecturaNotificacion(BaseModel):
+    readAt: datetime
+
+
 @rutas_piloto.post("/centinela/reportes", status_code=201, responses={
     200: {"model": Reporte, "description": "Reporte duplicado"},
     401: {"description": "Sesión inválida"}, 503: {"description": "Piloto no disponible"},
@@ -156,6 +174,38 @@ def consultar_campanas() -> list[CampanaCentinela]:
     with conectar_postgres() as conn:
         campanas, _ = piloto.leer_campanas(conn)
     return campanas
+
+
+@rutas_piloto.get("/centinela/campanas/por-reporte/{report_id}")
+def consultar_campana_por_reporte(report_id: UUID, analista: Analista) -> CampanaCentinela:
+    with conectar_postgres() as conn:
+        campanas, vinculos = piloto.leer_campanas(conn)
+    campana = piloto.campana_por_reporte(campanas, vinculos, report_id)
+    if campana is None:
+        raise HTTPException(404, "No se encontró la campaña de ese reporte.")
+    return CampanaCentinela.model_validate(campana)
+
+
+@rutas_piloto.post("/centinela/demo/{demo_id}/correo", status_code=202)
+def encolar_correo_demo(demo_id: UUID, analista: Analista):
+    if not notificaciones.correo_habilitado():
+        raise HTTPException(503, "El correo de la demo está desactivado.")
+    with conectar_postgres() as conn, conn.transaction():
+        notificaciones.crear_aviso(conn, "DEMO", demo_id)
+    return {"status": "ENCOLADO"}
+
+
+@rutas_piloto.get("/notificaciones")
+def consultar_notificaciones(analista: Analista) -> BandejaNotificaciones:
+    return BandejaNotificaciones.model_validate(notificaciones.listar_avisos(analista))
+
+
+@rutas_piloto.post("/notificaciones/{notificacion_id}/leer")
+def leer_notificacion(notificacion_id: UUID, analista: Analista) -> LecturaNotificacion:
+    fecha = notificaciones.marcar_leido(notificacion_id, analista)
+    if fecha is None:
+        raise HTTPException(404, "No se encontró la notificación.")
+    return LecturaNotificacion(readAt=fecha)
 
 
 @rutas_piloto.post("/guardian/evaluar")

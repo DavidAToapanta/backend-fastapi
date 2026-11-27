@@ -40,8 +40,12 @@ def test_flujo_real_de_reporte_a_decision(monkeypatch):
         "anonimo1": {"keySha256": huella("sesion-b"), "affiliate": None},
         "anonimo2": {"keySha256": huella("sesion-c"), "affiliate": None},
     }))
-    monkeypatch.setenv("PILOTO_ANALISTAS_JSON", json.dumps({"analista": huella("prueba-analista")}))
+    monkeypatch.setenv("PILOTO_ANALISTAS_JSON", json.dumps({
+        "analista": huella("prueba-analista"), "observador": huella("prueba-observador"),
+    }))
+    monkeypatch.setenv("NOTIFICACIONES_SMTP_HABILITADO", "false")
     analista = {"Authorization": "Bearer prueba-analista", "X-Analyst-Id": "analista"}
+    observador = {"Authorization": "Bearer prueba-observador", "X-Analyst-Id": "observador"}
     reportes = "/api/v1/centinela/reportes"
     casos = "/api/v1/guardian/casos"
     evaluar = "/api/v1/guardian/evaluar"
@@ -71,9 +75,12 @@ def test_flujo_real_de_reporte_a_decision(monkeypatch):
         assert cargar(datetime.now(timezone.utc) + timedelta(seconds=1)) == 21
         assert cargar(datetime.now(timezone.utc) + timedelta(hours=1)) == 0
 
+        reporte_umbral_id = None
         for token, provincia in [("sesion-b", "Azuay"), ("sesion-c", "Guayas")]:
-            assert cliente.post(reportes, headers={"Authorization": f"Bearer {token}"},
-                                json={"text": "https://alerta.example", "province": provincia}).status_code == 201
+            alta = cliente.post(reportes, headers={"Authorization": f"Bearer {token}"},
+                               json={"text": "https://alerta.example", "province": provincia})
+            assert alta.status_code == 201
+            reporte_umbral_id = alta.json()["reportId"]
 
     with TestClient(app) as cliente:
         reenviado = cliente.post(reportes, headers=clave, json=mensaje)
@@ -83,6 +90,13 @@ def test_flujo_real_de_reporte_a_decision(monkeypatch):
         assert grupos[0]["reportCount"] == 3
         assert grupos[0]["byProvince"] == {"Azuay": 1, "Guayas": 1, "Pichincha": 1}
         assert grupos[0]["status"] == "AVISO_A_AFILIADOS"
+        assert cliente.get(f"/api/v1/centinela/campanas/por-reporte/{reporte['reportId']}",
+                           headers=analista).json() == grupos[0]
+        avisos = cliente.get("/api/v1/notificaciones", headers=analista).json()
+        assert len(avisos["items"]) == 1
+        assert avisos["items"][0]["source"] == "CENTINELA"
+        assert avisos["items"][0]["referenceId"] == reporte_umbral_id
+        assert avisos["unreadCount"] == 1
         resultado = cliente.post(evaluar, headers=analista)
         assert resultado.status_code == 200, resultado.text
         resultado = resultado.json()
@@ -93,6 +107,19 @@ def test_flujo_real_de_reporte_a_decision(monkeypatch):
         desembolso = next(c for c in resultado["cases"] if c["evidence"]["rule"] == "GUARD-03")
         assert critico["evidence"]["phishingReportId"] == reporte["reportId"]
         assert critico["status"] == "EN_REVISION"
+        avisos = cliente.get("/api/v1/notificaciones", headers=analista).json()
+        assert avisos["unreadCount"] == 2
+        assert {aviso["source"] for aviso in avisos["items"]} == {"CENTINELA", "GUARDIAN"}
+        aviso_guardian = next(aviso for aviso in avisos["items"] if aviso["source"] == "GUARDIAN")
+        assert aviso_guardian["referenceId"] == critico["caseId"]
+        assert cliente.post(evaluar, headers=analista).status_code == 200
+        assert len(cliente.get("/api/v1/notificaciones", headers=analista).json()["items"]) == 2
+        assert cliente.get("/api/v1/notificaciones", headers=observador).json()["unreadCount"] == 2
+        lectura = cliente.post(f"/api/v1/notificaciones/{aviso_guardian['id']}/leer", headers=analista)
+        assert lectura.status_code == 200
+        assert cliente.post(f"/api/v1/notificaciones/{aviso_guardian['id']}/leer", headers=analista).json() == lectura.json()
+        assert cliente.get("/api/v1/notificaciones", headers=analista).json()["unreadCount"] == 1
+        assert cliente.get("/api/v1/notificaciones", headers=observador).json()["unreadCount"] == 2
         assert cliente.get(f"{casos}/{uuid4()}", headers=analista).status_code == 404
         assert cliente.get(f"{casos}/{critico['caseId']}", headers=analista).json() == critico
 

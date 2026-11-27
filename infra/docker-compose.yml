@@ -17,6 +17,7 @@ services:
       - ./postgres/init.sql:/docker-entrypoint-initdb.d/10-schema.sql:ro
       - ./postgres/permisos_break_glass.sql:/docker-entrypoint-initdb.d/20-break-glass.sql:ro
       - ./postgres/guardian_centinela.sql:/docker-entrypoint-initdb.d/30-guardian-centinela.sql:ro
+      - ./postgres/notificaciones.sql:/docker-entrypoint-initdb.d/40-notificaciones.sql:ro
     healthcheck:
       test: ["CMD", "pg_isready", "-h", "127.0.0.1", "-U", "${POSTGRES_USER}", "-d", "${POSTGRES_DB}"]
       interval: 5s
@@ -45,6 +46,7 @@ services:
       AEGIS_HMAC_CLAVE: ${AEGIS_HMAC_CLAVE:-}
       PILOTO_SESIONES_JSON: ${PILOTO_SESIONES_JSON:-}
       PILOTO_ANALISTAS_JSON: ${PILOTO_ANALISTAS_JSON:-}
+      NOTIFICACIONES_SMTP_HABILITADO: ${NOTIFICACIONES_SMTP_HABILITADO:-false}
     volumes:
       - type: bind
         source: ${METRICAS_ML_DIR_HOST:-../data/exports}
@@ -53,6 +55,28 @@ services:
       - cache_f11:/data/cache-f11
     ports:
       - "127.0.0.1:8000:8000"
+
+  correo-notificaciones:
+    image: backend-fastapi:local
+    profiles: ["correo"]
+    command: ["python", "-m", "app.servicios.correo_notificaciones"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      PGHOST: postgres
+      PGPORT: "5432"
+      PGDATABASE: ${POSTGRES_DB}
+      PGUSER: ${POSTGRES_APP_USER}
+      PGPASSWORD: ${POSTGRES_APP_PASSWORD}
+      NOTIFICACIONES_SMTP_HABILITADO: ${NOTIFICACIONES_SMTP_HABILITADO:-false}
+      NOTIFICACIONES_SMTP_HOST: ${NOTIFICACIONES_SMTP_HOST:-}
+      NOTIFICACIONES_SMTP_PUERTO: ${NOTIFICACIONES_SMTP_PUERTO:-}
+      NOTIFICACIONES_SMTP_MODO: ${NOTIFICACIONES_SMTP_MODO:-starttls}
+      NOTIFICACIONES_SMTP_REMITENTE: ${NOTIFICACIONES_SMTP_REMITENTE:-}
+      NOTIFICACIONES_SMTP_DESTINATARIO: ${NOTIFICACIONES_SMTP_DESTINATARIO:-}
+      NOTIFICACIONES_SMTP_USUARIO: ${NOTIFICACIONES_SMTP_USUARIO:-}
+      NOTIFICACIONES_SMTP_CLAVE: ${NOTIFICACIONES_SMTP_CLAVE:-}
 
 volumes:
   datos_postgres:
