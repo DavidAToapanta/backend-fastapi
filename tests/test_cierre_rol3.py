@@ -91,9 +91,11 @@ def test_pdf_registra_huella_antes_de_devolver_y_respeta_la_revision(monkeypatch
          patch("app.servicios.reporte_f11.registrar_evento_auditoria", return_value=(8, "hash")) as registrar:
         guardar_cache(CacheF11(sha256_insumos=huella, text="Conclusión."))
         assert generar_reporte_auditado()[1] == "Reporte_CTI_Tecnico_F11_AegisHealth.pdf"
-        assert "Pendiente" in renderizar.call_args.args[0]["estado"]
+        assert "Pendiente" not in renderizar.call_args.args[0]["estado"]
+        assert "generada" in renderizar.call_args.args[0]["estado"]
         guardar_cache(CacheF11(sha256_insumos=huella, text="Conclusión.", revisado=True))
         respuesta = cliente.post("/api/v1/reports/generate-pdf")
+        assert "validada" in renderizar.call_args.args[0]["estado"]
         sha256 = hashlib.sha256(contenido).hexdigest()
         assert respuesta.status_code == 200
         assert respuesta.headers["X-Report-SHA256"] == sha256
@@ -131,7 +133,10 @@ def test_pdf_medico_solo_renderiza_agregados_y_audita_el_archivo():
     assert respuesta.headers["content-type"] == "application/pdf"
     nombre = "Reporte_Ejecutivo_Medico_AegisHealth.pdf"
     assert respuesta.headers["Content-Disposition"] == f'attachment; filename="{nombre}"'
-    renderizar.assert_called_once_with({"cuentas": 16}, "medical")
+    renderizar.assert_called_once()
+    assert renderizar.call_args.args[1] == "medical"
+    assert renderizar.call_args.args[0]["cuentas"] == 16
+    assert "Texto privado" not in str(renderizar.call_args.args[0])
     evento = registrar.call_args.kwargs
     assert evento["operation"] == "EXPORT_MEDICAL_PDF"
     assert evento["dataset_name"] == nombre

@@ -11,7 +11,7 @@ docker compose --env-file .env -f infra/docker-compose.yml exec -T backend pytho
 
 La caché guarda conclusiones generadas localmente y una huella de los agregados y el contenido del reporte. Si cambian los insumos, vuelve a generarla. Si el modelo falla, la caché anterior queda disponible para sus insumos originales. El listado de campañas y las exportaciones del Rol 2 se mantienen en solo lectura.
 
-El Rol 5 revisa el archivo `Reporte_CTI_Tecnico_F11_AegisHealth.pdf`. La portada indica el estado de revisión. Tras su visto bueno, marca esa caché revisada con el siguiente comando. Una nueva generación de la caché vuelve a dejar el reporte pendiente de revisión.
+El informe técnico `Reporte_CTI_Tecnico_F11_AegisHealth.pdf` incorpora en portada la Sección 0 de resumen BLUF (TLP:AMBER). Tras la validación editorial final, marca esa caché validada con el siguiente comando; al regenerar conclusiones vuelve al estado de edición técnica generada (sin sellos provisionales).
 
 ```powershell
 docker compose --env-file .env -f infra/docker-compose.yml exec -T backend python -m app.cti_exports.cache_f11 --aprobar

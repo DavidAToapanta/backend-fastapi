@@ -2,63 +2,276 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <title>Continuidad hospitalaria | Dirección Médica</title>
+  <title>AegisHealth · Informe ejecutivo para Dirección Médica</title>
   <style>
-    @page { size: A4; margin: 20mm;
-      @bottom-left { content: "AegisHealth  ·  Dirección Médica"; color: #465c65; font-size: 9pt; }
-      @bottom-right { content: counter(page) " / " counter(pages); color: #465c65; font-size: 9pt; }
+    @page {
+      size: A4;
+      margin: 12mm 14mm 13mm;
+      @bottom-left {
+        content: "AegisHealth · Dirección Médica · {{ clasificacion | default('TLP:AMBER') }}";
+        color: #465c65;
+        font-size: 8pt;
+      }
+      @bottom-right {
+        content: "Página " counter(page) " / " counter(pages);
+        color: #465c65;
+        font-size: 8pt;
+      }
     }
-    body { margin: 0; font: 11pt/1.5 "DejaVu Sans", sans-serif; color: #18333a; }
-    header { border-top: 2mm solid #19665c; padding-top: 4mm; }
-    header p { color: #245e57; font-weight: bold; }
-    h1 { font-size: 26pt; line-height: 1.1; margin: 2mm 0 7mm; }
-    h2 { font-size: 14pt; line-height: 1.2; margin: 7mm 0 2mm; }
-    p { margin: 0 0 2mm; }
-    .estado { background: #fff3cf; border-left: 1.6mm solid #987013; padding: 4mm; }
-    .estado h2 { margin: 0 0 2mm; }
-    ol { margin: 0; padding-left: 7mm; }
-    li { margin-bottom: 2.5mm; padding-left: 1mm; }
-    footer { border-top: .3mm solid #b6c8c6; margin-top: 6mm; }
-    footer h2 { margin-top: 3mm; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font: 9.2pt/1.36 "DejaVu Sans", sans-serif;
+      color: #102a24;
+    }
+    header {
+      border-top: 2.2mm solid #0b5d46;
+      padding-top: 3mm;
+      margin-bottom: 3.5mm;
+    }
+    .marca {
+      margin: 0;
+      color: #0b5d46;
+      font-size: 8.5pt;
+      font-weight: bold;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+    h1 {
+      margin: 1.5mm 0 1.5mm;
+      font-size: 16.5pt;
+      line-height: 1.15;
+      color: #063729;
+    }
+    .control {
+      margin: 0;
+      padding: 1.5mm 2.5mm;
+      background: #eff6f2;
+      border: .25mm solid #cde2d7;
+      font-size: 8pt;
+      color: #244a40;
+    }
+    h2 {
+      margin: 3.5mm 0 1.8mm;
+      font-size: 10.5pt;
+      line-height: 1.2;
+      color: #063729;
+      text-transform: uppercase;
+      letter-spacing: .02em;
+    }
+    p { margin: 0 0 1.6mm; }
+    ol {
+      margin: 0;
+      padding-left: 5.5mm;
+    }
+    li {
+      margin-bottom: 1.5mm;
+      padding-left: .8mm;
+    }
+    .caja-urgente {
+      background: #fef3f2;
+      border: .3mm solid #f5c2c0;
+      border-left: 1.8mm solid #b42318;
+      padding: 2.8mm 3.5mm;
+      margin-bottom: 3.5mm;
+      break-inside: avoid;
+    }
+    .caja-urgente h2 {
+      margin-top: 0;
+      color: #8f1d14;
+    }
+    .caja-autorizar {
+      background: #eff6f2;
+      border: .3mm solid #b8d8c8;
+      border-left: 1.8mm solid #0b5d46;
+      padding: 2.8mm 3.5mm;
+      margin: 3.2mm 0;
+      break-inside: avoid;
+    }
+    .caja-autorizar h2 {
+      margin-top: 0;
+      color: #063729;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5mm 0 3mm;
+      font-size: 8.7pt;
+    }
+    th, td {
+      padding: 1.7mm 2.3mm;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: .2mm solid #d5e4dc;
+    }
+    th {
+      background: #0b5d46;
+      color: #ffffff;
+      font-size: 8.2pt;
+    }
+    tr:nth-child(even) td { background: #f7fbf9; }
+    tr { break-inside: avoid; }
+    .semaforo {
+      display: inline-block;
+      padding: .5mm 2mm;
+      border-radius: 1mm;
+      font-weight: bold;
+      font-size: 8.2pt;
+      white-space: nowrap;
+    }
+    .semaforo-rojo {
+      background: #fee4e2;
+      color: #912018;
+      border: .25mm solid #f9b5b0;
+    }
+    .semaforo-naranja {
+      background: #ffedd5;
+      color: #9a3412;
+      border: .25mm solid #fdba74;
+    }
+    .semaforo-amarillo {
+      background: #fef3c7;
+      color: #854d0e;
+      border: .25mm solid #fcd34d;
+    }
+    .en-numeros {
+      background: #e9f3ef;
+      border: .25mm solid #cde2d7;
+      padding: 2.2mm 3mm;
+      margin: 2.5mm 0;
+      font-size: 8.4pt;
+      color: #063729;
+    }
+    footer {
+      border-top: .3mm solid #cde2d7;
+      padding-top: 2mm;
+      margin-top: 2mm;
+      font-size: 8pt;
+      color: #36524b;
+    }
   </style>
 </head>
 <body>
   <header>
-    <p>Dirección Médica · Ejercicio simulado de octubre de 2026</p>
-    <h1>Continuidad hospitalaria</h1>
+    <p class="marca">AegisHealth · Informe ejecutivo para Dirección Médica</p>
+    <h1>Riesgo para la información de salud — octubre de 2026 (ejercicio con datos simulados)</h1>
+    <p class="control">
+      Emitido: {{ fecha_emision | default("27-nov-2026") }} · Versión {{ version | default("1.0") }} ·
+      Clasificación: <strong>{{ clasificacion | default("TLP:AMBER") }}</strong> (uso interno) · Para: Dirección Médica
+    </p>
   </header>
-  <section class="estado">
-    <h2>Semáforo de continuidad hospitalaria · Amarillo</h2>
-    <p>Se recomienda vigilancia. Falta confirmar con las jefaturas si algún
-      servicio tuvo demoras o dificultades para consultar historias clínicas.</p>
-  </section>
-  <section>
-    <h2>Hallazgos del ejercicio</h2>
-    <p>La revisión abarca {{ cuentas }} cuentas administrativas. Se observaron
-      reactivaciones de cuentas y cambios de permisos que requieren cotejo con
-      las funciones y los turnos autorizados.</p>
-    <p>El 24 de octubre se registró una descarga fuera de turno. Queda por
-      confirmar si estaba autorizada y qué información comprendía.</p>
-  </section>
-  <section>
-    <h2>Plan de acción con Talento Humano</h2>
+
+  <section class="caja-urgente">
+    <h2>LO MÁS IMPORTANTE</h2>
     <ol>
-      <li><strong>Hoy.</strong> Dirección Médica consultará a las jefaturas de turno
-        si hubo demoras y acordará cómo mantener la atención si falla el acceso
-        a las historias clínicas.</li>
-      <li><strong>En 48 horas.</strong> Talento Humano y las jefaturas cotejarán
-        los turnos y permisos de las {{ cuentas }} cuentas y verificarán si la
-        descarga del 24 de octubre tenía autorización.</li>
-      <li><strong>En una semana.</strong> Dirección Médica, Talento Humano y Sistemas
-        ajustarán los permisos que correspondan y dejarán constancia de los
-        cambios y de su efecto en la atención.</li>
+      <li>
+        <strong>Posible salida de información de salud.</strong> El {{ fecha_evento | default("24 de octubre") }}
+        a las {{ hora_evento | default("22:40 (hora local del registro)") }}, una cuenta del sistema médico
+        <strong>descargó información y, 30 segundos después, hubo una conexión hacia un servidor externo</strong>
+        a la institución. Aún no sabemos qué información ni cuánta.
+      </li>
+      <li>
+        <strong>Cuentas compartidas sin control.</strong> {{ cuentas_compartidas | default(11) }} de las
+        {{ cuentas }} cuentas administrativas fueron usadas por <strong>decenas o cientos de personas distintas</strong>
+        (una de ellas, por {{ max_identidades_cuenta | default("1.737") }}). Así <strong>no se puede saber quién
+        hizo cada cambio</strong>: activaciones, reactivaciones y cambios de permisos.
+      </li>
+      <li>
+        <strong>No vemos señales de interrupción de la atención</strong> en los registros, pero falta confirmarlo con las jefaturas.
+      </li>
     </ol>
   </section>
+
+  <section>
+    <h2>Estado del riesgo</h2>
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 36%;">Aspecto</th>
+          <th style="width: 22%;">Semáforo</th>
+          <th>Qué significa</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Confidencialidad</strong> (que nadie vea o saque datos de pacientes)</td>
+          <td><span class="semaforo semaforo-rojo">&#9679; Rojo · Alto</span></td>
+          <td>Posible salida de datos el 24-oct hacia un servidor externo</td>
+        </tr>
+        <tr>
+          <td><strong>Integridad</strong> (que los datos y permisos sean correctos)</td>
+          <td><span class="semaforo semaforo-naranja">&#9679; Naranja · Medio-alto</span></td>
+          <td>Cambios masivos de permisos con cuentas compartidas</td>
+        </tr>
+        <tr>
+          <td><strong>Disponibilidad</strong> (que el sistema funcione para atender)</td>
+          <td><span class="semaforo semaforo-amarillo">&#9679; Amarillo · Por confirmar</span></td>
+          <td>Sin señales de caída en los registros del periodo</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="caja-autorizar">
+    <h2>LO QUE NECESITAMOS QUE USTED AUTORICE HOY</h2>
+    <ol>
+      <li>
+        <strong>Bloquear las conexiones desde la red clínica hacia internet</strong> que no estén autorizadas.
+        <em>Responsable: Sistemas · Plazo: hoy.</em>
+      </li>
+      <li>
+        <strong>Revisar y suspender las {{ cuentas }} cuentas administrativas compartidas</strong>; cada persona
+        debe usar su propia cuenta personal. <em>Responsable: Talento Humano + Sistemas · Plazo: 48 horas.</em>
+      </li>
+      <li>
+        <strong>Activar la evaluación legal:</strong> si se confirma que salieron datos de pacientes, la ley exige
+        <strong>notificar a la Superintendencia de Protección de Datos Personales en máximo 5 días</strong>
+        (artículo 43 de la LOPDP, reformado por la Ley de Ciberseguridad de 2026).
+        <em>Responsable: Jurídico / Delegado de Protección de Datos · Plazo: iniciar hoy.</em>
+      </li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>Plan de acción</h2>
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 14%;">Plazo</th>
+          <th>Acción</th>
+          <th style="width: 28%;">Responsable</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Hoy</strong></td>
+          <td>Bloqueo de salidas no autorizadas · preguntar a las jefaturas si hubo demoras en la atención · conservar las evidencias</td>
+          <td>Sistemas · Dirección Médica</td>
+        </tr>
+        <tr>
+          <td><strong>48 horas</strong></td>
+          <td>Revisar las {{ cuentas }} cuentas y los permisos cambiados · confirmar si la descarga del 24-oct estaba autorizada y qué contenía</td>
+          <td>Talento Humano · Jefaturas · Sistemas</td>
+        </tr>
+        <tr>
+          <td><strong>1 semana</strong></td>
+          <td>Cuentas personales obligatorias · doble verificación al ingresar en cuentas administrativas · decisión final sobre la notificación legal</td>
+          <td>Sistemas · Jurídico · Dirección Médica</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <div class="en-numeros">
+    <strong>En números:</strong> {{ millones_registros | default("10 millones") }} de registros revisados ·
+    {{ ataques_detectados | default("5 de 5") }} ataques detectados ·
+    {{ cuentas_normales_falsas | default("0 de 10.000") }} cuentas normales marcadas por error ·
+    una de las cuentas atacadas ya mostraba señales de riesgo <strong>{{ dias_anticipacion | default(16) }} días antes</strong> del ataque.
+  </div>
+
   <footer>
-    <h2>Protección de datos de salud</h2>
-    <p>El artículo 25 de la Ley Orgánica de Protección de Datos Personales
-      (LOPDP) reconoce los datos de salud como categoría especial. Este informe
-      presenta hallazgos agrupados y preserva la identidad de pacientes y personal.</p>
+    <strong>Protección de datos de salud:</strong> este informe no contiene nombres de pacientes ni de personal.
+    Toda identidad fue reemplazada por códigos (seudonimización), conforme al tratamiento reforzado exigido para datos de salud.
   </footer>
 </body>
 </html>

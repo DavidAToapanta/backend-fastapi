@@ -2,18 +2,18 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <title>Reporte de inteligencia de amenazas | AegisHealth-CTI</title>
+  <title>AegisHealth-CTI · Reporte Técnico de Inteligencia (Ficha F-11)</title>
   <style>
     @page {
       size: A4;
-      margin: 17mm 18mm 18mm;
+      margin: 14mm 15mm 15mm;
       @bottom-left {
-        content: "AegisHealth-CTI  ·  Ejercicio sintético";
+        content: "AegisHealth-CTI · Ficha F-11 · TLP:AMBER · Datos sintéticos";
         color: #415866;
         font-size: 8pt;
       }
       @bottom-right {
-        content: counter(page) " / " counter(pages);
+        content: "Página " counter(page) " / " counter(pages);
         color: #415866;
         font-size: 8pt;
       }
@@ -21,94 +21,162 @@
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      color: #182b3b;
-      font: 10pt/1.43 "DejaVu Sans", sans-serif;
+      color: #102a24;
+      font: 9.2pt/1.38 "DejaVu Sans", sans-serif;
     }
-    p { margin: 0 0 3mm; }
+    p { margin: 0 0 2.5mm; }
     .pagina + .pagina { break-before: page; }
-    .portada { border-top: 2.3mm solid #146659; padding-top: 4mm; }
+    .portada { border-top: 2.3mm solid #0b5d46; padding-top: 3mm; margin-bottom: 3mm; }
     .linea-ficha {
-      color: #124f49;
-      font-size: 9pt;
+      color: #0b5d46;
+      font-size: 8.5pt;
       font-weight: bold;
       letter-spacing: .04em;
     }
-    .borrador {
+    .control-doc {
+      margin: 1.5mm 0;
+      padding: 1.5mm 2.5mm;
+      background: #eff6f2;
+      border: .25mm solid #cde2d7;
+      font-size: 8pt;
+      color: #244a40;
+    }
+    .sello-estado {
       display: inline-block;
-      background: #fff1cc;
-      color: #61420f;
-      padding: 1.2mm 2.5mm;
-      margin: 2mm 0 0;
-      font-size: 9pt;
+      background: #e9f3ef;
+      border: .25mm solid #b8d8c8;
+      color: #063729;
+      padding: 1mm 2.5mm;
+      margin: 1mm 0 0;
+      font-size: 8pt;
       font-weight: bold;
     }
     h1 {
-      margin: 3mm 0 3mm;
-      max-width: 155mm;
-      font-size: 27pt;
+      margin: 2.5mm 0 2mm;
+      font-size: 20pt;
       line-height: 1.12;
-      letter-spacing: -.025em;
+      letter-spacing: -.02em;
+      color: #063729;
     }
-    .indicadores { width: 100%; margin: 5mm 0 7mm; table-layout: fixed; }
-    .indicadores td {
-      background: #e9f3f1;
-      padding: 3mm 4mm;
-      border-right: 1mm solid white;
-    }
-    .indicadores td:last-child { border-right: 0; }
-    .indicadores strong { display: block; color: #124f49; font-size: 16pt; }
-    .indicadores span { font-size: 8.5pt; }
-    section { margin: 0 0 7mm; }
     h2 {
-      margin: 0 0 3mm;
-      padding-bottom: 1.7mm;
-      border-bottom: .3mm solid #b7cbc9;
-      font-size: 14pt;
+      margin: 0 0 2.5mm;
+      padding-bottom: 1.2mm;
+      border-bottom: .35mm solid #b7cbc9;
+      font-size: 12pt;
       line-height: 1.25;
+      color: #063729;
       break-after: avoid;
     }
-    .tabla { width: 100%; border-collapse: collapse; margin: 2mm 0 3mm; }
-    .tabla th, .tabla td {
-      padding: 2.3mm 2.6mm;
-      text-align: left;
-      vertical-align: top;
+    h3 {
+      margin: 3mm 0 1.5mm;
+      font-size: 10pt;
+      color: #0b5d46;
+      break-after: avoid;
     }
-    .tabla th { background: #153a48; color: white; font-size: 8.5pt; }
-    .tabla td { border-bottom: .2mm solid #d5e0e3; }
-    .tabla tr:nth-child(even) td { background: #f2f6f7; }
-    tr { break-inside: avoid; }
-    .nota {
-      padding: 3mm 3.8mm;
-      border-left: 1mm solid #146659;
-      background: #e9f3f1;
+    section { margin: 0 0 4.5mm; }
+    .indicadores { width: 100%; border-collapse: collapse; margin: 2.5mm 0 3.5mm; table-layout: fixed; }
+    .indicadores td {
+      background: #e9f3ef;
+      border: .25mm solid #cde2d7;
+      border-right: 1mm solid #ffffff;
+      padding: 2.2mm 3mm;
+    }
+    .indicadores td:last-child { border-right: .25mm solid #cde2d7; }
+    .indicadores strong { display: block; color: #063729; font-size: 12.5pt; }
+    .indicadores span { font-size: 7.8pt; color: #244a40; }
+    .juicio-box {
+      background: #fef3f2;
+      border: .3mm solid #f5c2c0;
+      border-left: 1.8mm solid #b42318;
+      padding: 2.5mm 3.2mm;
+      margin-bottom: 3mm;
       break-inside: avoid;
     }
-    .encabezado-pagina {
-      margin: 0 0 7mm;
-      padding-bottom: 2mm;
-      border-bottom: .7mm solid #146659;
+    .cifras-clave {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 2.5mm 0 3mm;
+      table-layout: fixed;
     }
-    .etiqueta { font-weight: bold; color: #124f49; }
-    .huella { font: 8pt/1.4 "DejaVu Sans Mono", monospace; overflow-wrap: anywhere; }
-    figure { margin: 3mm 0; break-inside: avoid; }
+    .cifras-clave td {
+      background: #f4faf7;
+      border: .25mm solid #cde2d7;
+      padding: 1.6mm 2mm;
+      text-align: center;
+      font-size: 7.7pt;
+    }
+    .cifras-clave strong {
+      display: block;
+      font-size: 8.8pt;
+      color: #063729;
+    }
+    .acciones-bluf {
+      background: #eff6f2;
+      border: .25mm solid #cde2d7;
+      border-left: 1.5mm solid #0b5d46;
+      padding: 2.4mm 3.2mm;
+      margin: 2mm 0;
+      break-inside: avoid;
+    }
+    .acciones-bluf ol, .acciones-bluf ul { margin: 1mm 0 0; padding-left: 5mm; }
+    .acciones-bluf li { margin-bottom: 1mm; }
+    .tabla { width: 100%; border-collapse: collapse; margin: 1.5mm 0 3mm; font-size: 8.3pt; }
+    .tabla th, .tabla td {
+      padding: 1.8mm 2.1mm;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: .2mm solid #d5e4dc;
+    }
+    .tabla th { background: #063729; color: #ffffff; font-size: 8pt; }
+    .tabla tr:nth-child(even) td { background: #f7fbf9; }
+    tr { break-inside: avoid; }
+    .sev-critica { color: #912018; font-weight: bold; }
+    .sev-alta { color: #9a3412; font-weight: bold; }
+    .nota {
+      padding: 2.5mm 3.2mm;
+      border-left: 1mm solid #0b5d46;
+      background: #eff6f2;
+      break-inside: avoid;
+      margin: 2mm 0;
+    }
+    .encabezado-pagina {
+      margin: 0 0 4mm;
+      padding-bottom: 1.5mm;
+      border-bottom: .6mm solid #0b5d46;
+    }
+    .etiqueta { font-weight: bold; color: #063729; }
+    .huella { font: 7.6pt/1.35 "DejaVu Sans Mono", monospace; overflow-wrap: anywhere; }
+    figure { margin: 2.5mm 0; break-inside: avoid; }
     figure img { display: block; width: 100%; }
-    figcaption { color: #415866; font-size: 8.5pt; }
+    figcaption { color: #415866; font-size: 8pt; }
+    ul { margin: 1mm 0 2mm; padding-left: 5mm; }
+    li { margin-bottom: 1mm; }
   </style>
 </head>
 <body>
   <main>
+    <!-- PÁGINA 1: BLUF (SECCIÓN 0) -->
     <div class="pagina">
       <header class="portada">
-        <div class="linea-ficha">AegisHealth-CTI / Ficha F-11 · TLP:RED</div>
-        <div class="borrador">{{ estado | default("Borrador · Datos ficticios") }}</div>
-        <h1>Reporte de inteligencia de amenazas</h1>
-        <p>{{ resumen }}</p>
+        <div class="linea-ficha">
+          AegisHealth-CTI · Reporte de inteligencia de amenazas (Ficha {{ metadata.codigo_ficha | default("F-11") }}) · {{ metadata.clasificacion | default("TLP:AMBER") }}
+        </div>
+        <h1>0. Resumen de inteligencia</h1>
+        <div class="control-doc">
+          Periodo: {{ metadata.periodo | default("01–31 oct 2026") }} · Emitido: {{ metadata.fecha_emision | default("27-nov-2026") }} ·
+          v{{ metadata.version | default("1.0") }} · <strong>{{ metadata.clasificacion | default("TLP:AMBER") }}</strong> ·
+          Para: {{ metadata.destinatario | default("SOC / Seguridad de la Información IESS") }} ·
+          {{ metadata.nota_datos | default("Datos sintéticos de ejercicio") }}
+        </div>
+        {% if estado is defined %}
+        <div class="sello-estado">{{ estado }}</div>
+        {% endif %}
         {% if nota_solicitante | default(none) %}
-        <p><span class="etiqueta">Nota del solicitante</span> {{ nota_solicitante }}</p>
+        <p class="nota"><span class="etiqueta">Nota del operador:</span> {{ nota_solicitante }}</p>
         {% endif %}
       </header>
 
-      <table class="indicadores" aria-label="Indicadores del ejercicio">
+      <table class="indicadores" aria-label="Indicadores de amenaza y anticipación">
         <tr>
         {% for cifra, nombre in indicadores %}
           <td><strong>{{ cifra }}</strong><span>{{ nombre }}</span></td>
@@ -116,42 +184,178 @@
         </tr>
       </table>
 
+      <div class="juicio-box">
+        <p style="margin: 0;"><span class="etiqueta">Juicio clave:</span> {{ juicio_clave }}</p>
+      </div>
+
+      <section>
+        <h3>Campañas ordenadas por prioridad operativa</h3>
+        <table class="tabla">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Campaña</th>
+              <th>Qué pasó</th>
+              <th>Fecha (hora local)</th>
+              <th>Severidad</th>
+              <th>Confianza</th>
+              <th>Acción inmediata</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for c in campanas_prioridad %}
+            <tr>
+              <td>{{ c.prioridad }}</td>
+              <td><strong>{{ c.codigo }}</strong></td>
+              <td>{{ c.resumen }}</td>
+              <td>{{ c.fecha_local }}</td>
+              <td class="{{ 'sev-critica' if 'CRÍT' in c.severidad else 'sev-alta' }}">{{ c.severidad }}</td>
+              <td>{{ c.confianza }}</td>
+              <td>{{ c.accion }}</td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </section>
+
+      <table class="cifras-clave" aria-label="Cifras clave del ejercicio">
+        <tr>
+        {% for valor, etiqueta in cifras_clave %}
+          <td><strong>{{ valor }}</strong><span>{{ etiqueta }}</span></td>
+        {% endfor %}
+        </tr>
+      </table>
+
+      <div class="acciones-bluf">
+        <span class="etiqueta">Cinco acciones prioritarias (TLP:AMBER)</span>
+        <ol>
+        {% for accion in acciones_prioritarias %}
+          <li>{{ accion }}</li>
+        {% endfor %}
+        </ol>
+      </div>
+    </div>
+
+    <!-- PÁGINA 2: SECCIONES 1, 2 Y 3 -->
+    <div class="pagina">
+      <div class="linea-ficha encabezado-pagina">AegisHealth-CTI / Ficha F-11 · TLP:AMBER</div>
+
       <section>
         <h2>1. Fuentes y metodología</h2>
         <p>{{ metodologia }}</p>
         <table class="tabla">
-          <thead><tr><th>Fuente</th><th>Registros</th><th>{{ "SHA-256 de la ingesta" if estado is defined else "Uso en el análisis" }}</th></tr></thead>
+          <thead>
+            <tr>
+              <th>Fuente</th>
+              <th>Tipo</th>
+              <th>Admiralty</th>
+              <th>Criterio de valoración</th>
+            </tr>
+          </thead>
           <tbody>
-          {% for fuente, registros, uso in fuentes %}
-            <tr><td>{{ fuente }}</td><td>{{ registros }}</td><td{% if estado is defined %} class="huella"{% endif %}>{{ uso }}</td></tr>
+          {% for fuente, tipo, escala, motivo in fuentes_admiralty %}
+            <tr>
+              <td><strong>{{ fuente }}</strong></td>
+              <td>{{ tipo }}</td>
+              <td><strong>{{ escala }}</strong></td>
+              <td>{{ motivo }}</td>
+            </tr>
           {% endfor %}
           </tbody>
         </table>
-        <p><span class="etiqueta">Admiralty</span> {{ admiralty }}</p>
+        <p><span class="etiqueta">Alcance de valoración:</span> {{ admiralty }}</p>
       </section>
 
       <section>
-        <h2>2. Evaluación de adversarios</h2>
+        <h2>2. Evaluación de adversarios (Modelo Diamante)</h2>
         <p>{{ adversarios }}</p>
+        <table class="tabla">
+          <thead>
+            <tr>
+              <th>Campaña</th>
+              <th>Adversario</th>
+              <th>Capacidad</th>
+              <th>Infraestructura</th>
+              <th>Víctima</th>
+              <th>Motivación probable</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for camp, adv, cap, infra, vic, mot in modelo_diamante %}
+            <tr>
+              <td><strong>{{ camp }}</strong></td>
+              <td>{{ adv }}</td>
+              <td>{{ cap }}</td>
+              <td>{{ infra }}</td>
+              <td>{{ vic }}</td>
+              <td>{{ mot }}</td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
       </section>
 
       <section>
-        <h2>3. Inteligencia estratégica</h2>
-        <p>{{ impacto }}</p>
+        <h2>3. Inteligencia estratégica y marco normativo</h2>
+        <table class="tabla">
+          <thead>
+            <tr>
+              <th>Dimensión</th>
+              <th>Riesgo</th>
+              <th>Impacto sustentado en registros</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for dim, niv, desc in impacto_estrategico %}
+            <tr>
+              <td><strong>{{ dim }}</strong></td>
+              <td><strong>{{ niv }}</strong></td>
+              <td>{{ desc }}</td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        <p class="nota">{{ impacto }}</p>
       </section>
     </div>
 
+    <!-- PÁGINA 3: SECCIONES 4 Y 5 -->
     <div class="pagina">
-      <div class="linea-ficha encabezado-pagina">AegisHealth-CTI / Ficha F-11</div>
+      <div class="linea-ficha encabezado-pagina">AegisHealth-CTI / Ficha F-11 · TLP:AMBER</div>
 
       <section>
-        <h2>4. Inteligencia táctica</h2>
-        <p>Técnicas MITRE ATT&amp;CK registradas para las campañas del ejercicio.</p>
+        <h2>4. Inteligencia táctica (Matriz campaña × táctica MITRE ATT&amp;CK)</h2>
+        <table class="tabla">
+          <thead>
+            <tr>
+              <th>Táctica</th>
+              <th>001</th>
+              <th>002</th>
+              <th>003</th>
+              <th>004</th>
+              <th>005</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for tactica, c1, c2, c3, c4, c5 in matriz_tactica %}
+            <tr>
+              <td><strong>{{ tactica }}</strong></td>
+              <td>{{ c1 }}</td>
+              <td>{{ c2 }}</td>
+              <td>{{ c3 }}</td>
+              <td>{{ c4 }}</td>
+              <td>{{ c5 }}</td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+
+        <h3>Catálogo de técnicas observadas</h3>
         <table class="tabla">
           <thead><tr><th>Técnica</th><th>Comportamiento simulado</th></tr></thead>
           <tbody>
           {% for tecnica, comportamiento in tecnicas %}
-            <tr><td>{{ tecnica }}</td><td>{{ comportamiento }}</td></tr>
+            <tr><td><strong>{{ tecnica }}</strong></td><td>{{ comportamiento }}</td></tr>
           {% endfor %}
           </tbody>
         </table>
@@ -160,59 +364,129 @@
       <section>
         <h2>5. Inteligencia operativa</h2>
         <table class="tabla">
-          <thead><tr><th>Campaña</th><th>{{ "Admiralty" if estado is defined else "Ventana ilustrativa" }}</th><th>Hallazgo</th></tr></thead>
+          <thead>
+            <tr>
+              <th>Campaña</th>
+              <th>Fecha (hora local)</th>
+              <th>Conteos y reglas IoA</th>
+              <th>Confianza</th>
+              <th>Hallazgo</th>
+            </tr>
+          </thead>
           <tbody>
-          {% for codigo, ventana, hallazgo in campanas %}
-            <tr><td>{{ codigo }}</td><td>{{ ventana }}</td><td>{{ hallazgo }}</td></tr>
+          {% for cod, fecha_l, conteo, reglas, conf, hall in detalle_operativo %}
+            <tr>
+              <td><strong>{{ cod }}</strong></td>
+              <td>{{ fecha_l }}</td>
+              <td>{{ conteo }} ({{ reglas }})</td>
+              <td>{{ conf }}</td>
+              <td>{{ hall }}</td>
+            </tr>
           {% endfor %}
           </tbody>
         </table>
       </section>
-      {% if grafico_horario is defined %}
     </div>
+
+    <!-- PÁGINA 4: CRONOLOGÍA 001 + MAPA HORARIO + SECCIÓN 6 -->
     <div class="pagina">
-      <div class="linea-ficha encabezado-pagina">AegisHealth-CTI / Ficha F-11</div>
+      <div class="linea-ficha encabezado-pagina">AegisHealth-CTI / Ficha F-11 · TLP:AMBER</div>
+
       <section>
-        <h3>Cronología CAMP-2026-001</h3>
+        <h3>Cronología de CAMP-2026-001 (hora local del registro)</h3>
         <p>{{ nota_temporal }}</p>
         <table class="tabla">
-          <thead><tr><th>Fecha y hora</th><th>Fuente</th><th>Ajuste +12 h</th></tr></thead>
+          <thead>
+            <tr>
+              <th>Hora original</th>
+              <th>Hora ajustada</th>
+              <th>Fuente</th>
+              <th>Evento observado</th>
+            </tr>
+          </thead>
           <tbody>
-          {% for fecha, fuente, ajuste in cronologia %}
-            <tr><td>{{ fecha }}</td><td>{{ fuente }}</td><td>{{ ajuste }}</td></tr>
+          {% for orig, ajus, fuente, det in cronologia %}
+            <tr>
+              <td>{{ orig }}</td>
+              <td>{{ ajus }}</td>
+              <td>{{ fuente }}</td>
+              <td>{{ det }}</td>
+            </tr>
           {% endfor %}
           </tbody>
         </table>
+        {% if grafico_horario is defined %}
         <figure>
-          <img src="{{ grafico_horario }}" alt="Mapa horario de eventos por día y hora UTC">
-          <figcaption>Actividad por día y hora según los agregados de PostgreSQL.</figcaption>
+          <img src="{{ grafico_horario }}" alt="Mapa horario de eventos por día y hora local del registro">
+          <figcaption>{{ nota_mapa_calor }}</figcaption>
         </figure>
-      </section>
-      {% else %}
-      <p>{{ nota_temporal }}</p>
-      {% endif %}
-      <section>
-        <h2>6. Inteligencia técnica</h2>
-        <p><span class="etiqueta">IoA</span> {{ comportamiento_observable }}</p>
-        <p><span class="etiqueta">IoC</span> {{ indicador_compromiso }}</p>
-        {% if estado is defined %}
-        <p>Destino externo del caso 001 en el ejercicio: 186.46.219[.]18.</p>
         {% endif %}
+      </section>
+
+      <section>
+        <h2>6. Inteligencia técnica (IoC, IoA y ML)</h2>
+        <p><span class="etiqueta">IoC · Contención puntual:</span> {{ indicador_compromiso }}</p>
+        <table class="tabla">
+          <thead>
+            <tr>
+              <th>Indicador</th>
+              <th>Tipo</th>
+              <th>Contexto</th>
+              <th>Acción</th>
+              <th>TLP</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for ind, tipo, ctx, acc, tlp in tabla_ioc %}
+            <tr>
+              <td><strong>{{ ind }}</strong></td>
+              <td>{{ tipo }}</td>
+              <td>{{ ctx }}</td>
+              <td>{{ acc }}</td>
+              <td>{{ tlp }}</td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+
+        <p><span class="etiqueta">IoA · Detección de comportamiento:</span> {{ comportamiento_observable }}</p>
+        <table class="tabla">
+          <thead>
+            <tr>
+              <th>Regla</th>
+              <th>Comportamiento</th>
+              <th>Umbral</th>
+              <th>Cobertura</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for r_cod, r_nom, r_umb, r_cob in catalogo_ioa %}
+            <tr>
+              <td><strong>{{ r_cod }}</strong></td>
+              <td>{{ r_nom }}</td>
+              <td>{{ r_umb }}</td>
+              <td>{{ r_cob }}</td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+
         <p>{{ metricas }}</p>
         <p class="nota">{{ exportaciones }}</p>
         {% if muestra_sigma is defined %}
         {% for grupo, regla in muestra_sigma %}
-        <p><span class="etiqueta">Ejemplo Sigma {{ grupo }}</span> {{ regla }}</p>
+        <p><span class="etiqueta">Ejemplo Sigma {{ grupo }}:</span> {{ regla }}</p>
         {% endfor %}
         {% endif %}
       </section>
     </div>
 
+    <!-- PÁGINA 5: SECCIONES 7, 8 + ANEXOS A Y B -->
     <div class="pagina">
-      <div class="linea-ficha encabezado-pagina">AegisHealth-CTI / Ficha F-11</div>
+      <div class="linea-ficha encabezado-pagina">AegisHealth-CTI / Ficha F-11 · TLP:AMBER</div>
 
       <section>
-        <h2>7. Evaluación de escenarios (IPE)</h2>
+        <h2>7. Evaluación de escenarios (IPE) y anticipación</h2>
         <p>{{ alcance_ipe }}</p>
         {% if grafico_ipe is defined %}
         <figure>
@@ -232,23 +506,75 @@
           {% endfor %}
           </tbody>
         </table>
-      </section>
 
-      <section>
-        <h2>8. Conclusiones y priorización de controles</h2>
-        <p>{{ conclusiones }}</p>
+        <h3>Anticipación temporal validada (sin fuga de información futura)</h3>
         <table class="tabla">
-          <thead><tr><th>Plazo</th><th>Control recomendado para el ejercicio</th></tr></thead>
+          <thead>
+            <tr>
+              <th>Nivel de anticipación</th>
+              <th>Resultado validado</th>
+            </tr>
+          </thead>
           <tbody>
-          {% for plazo, control in controles %}
-            <tr><td>{{ plazo }}</td><td>{{ control }}</td></tr>
+          {% for nivel, res in tabla_anticipacion %}
+            <tr><td><strong>{{ nivel }}</strong></td><td>{{ res }}</td></tr>
           {% endfor %}
           </tbody>
         </table>
+      </section>
+
+      <section>
+        <h2>8. Conclusiones, priorización de controles y brechas</h2>
+        <p>{{ conclusiones }}</p>
+        <table class="tabla">
+          <thead><tr><th>Plazo</th><th>Control recomendado</th></tr></thead>
+          <tbody>
+          {% for plazo, control in controles %}
+            <tr><td><strong>{{ plazo }}</strong></td><td>{{ control }}</td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
+
+        <div class="nota">
+          <span class="etiqueta">Brechas de inteligencia y limitaciones del análisis</span>
+          <ul>
+          {% for brecha in brechas %}
+            <li>{{ brecha }}</li>
+          {% endfor %}
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>Anexo A. Integridad criptográfica y trazabilidad</h2>
         <p class="nota">{{ estado_evidencias }}</p>
+        <table class="tabla">
+          <thead><tr><th>Fuente</th><th>Registros</th><th>SHA-256 de la ingesta</th></tr></thead>
+          <tbody>
+          {% for f_nom, f_reg, f_hash in anexo_hashes %}
+            <tr>
+              <td>{{ f_nom }}</td>
+              <td>{{ f_reg }}</td>
+              <td class="huella">{{ f_hash }}</td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
         {% if huella_insumos is defined %}
-        <p>Sello SHA-256 de los insumos<br><span class="huella">{{ huella_insumos }}</span></p>
+        <p><span class="etiqueta">Sello SHA-256 de los insumos del reporte:</span><br><span class="huella">{{ huella_insumos }}</span></p>
         {% endif %}
+      </section>
+
+      <section>
+        <h2>Anexo B. Calidad de datos y cumplimiento LOPDP</h2>
+        <table class="tabla">
+          <thead><tr><th>Indicador de control</th><th>Detalle auditado</th></tr></thead>
+          <tbody>
+          {% for k, v in anexo_calidad %}
+            <tr><td><strong>{{ k }}</strong></td><td>{{ v }}</td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
       </section>
     </div>
   </main>
