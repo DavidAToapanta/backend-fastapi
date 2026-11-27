@@ -142,6 +142,9 @@
       font-size: 8.4pt;
       color: #063729;
     }
+    .consecuencias { break-before: page; }
+    .consecuencias ul { margin: 0; padding-left: 4.5mm; }
+    .consecuencias li { margin-bottom: .8mm; padding-left: 0; }
     footer {
       border-top: .3mm solid #cde2d7;
       padding-top: 2mm;
@@ -154,10 +157,10 @@
 <body>
   <header>
     <p class="marca">AegisHealth · Informe ejecutivo para Dirección Médica</p>
-    <h1>Riesgo para la información de salud — octubre de 2026 (ejercicio con datos simulados)</h1>
+    <h1>Riesgo para la información de salud — octubre de 2026</h1>
     <p class="control">
       Emitido: {{ fecha_emision | default("27-nov-2026") }} · Versión {{ version | default("1.0") }} ·
-      Clasificación: <strong>{{ clasificacion | default("TLP:AMBER") }}</strong> (uso interno) · Para: Dirección Médica
+      Clasificación: <strong>{{ clasificacion | default("TLP:AMBER") }}</strong> (uso interno) · Para: Dirección Médica · Ejercicio con datos simulados
     </p>
   </header>
 
@@ -172,12 +175,12 @@
       </li>
       <li>
         <strong>Cuentas compartidas sin control.</strong> {{ cuentas_compartidas | default(11) }} de las
-        {{ cuentas }} cuentas administrativas fueron usadas por <strong>decenas o cientos de personas distintas</strong>
+        {{ cuentas }} cuentas administrativas fueron usadas por <strong>decenas o cientos de usuarios distintos</strong>
         (una de ellas, por {{ max_identidades_cuenta | default("1.737") }}). Así <strong>no se puede saber quién
         hizo cada cambio</strong>: activaciones, reactivaciones y cambios de permisos.
       </li>
       <li>
-        <strong>No vemos señales de interrupción de la atención</strong> en los registros, pero falta confirmarlo con las jefaturas.
+        <strong>Sin señales de interrupción de la atención</strong>; falta confirmarlo con las jefaturas.
       </li>
     </ol>
   </section>
@@ -255,11 +258,34 @@
         </tr>
         <tr>
           <td><strong>1 semana</strong></td>
-          <td>Cuentas personales obligatorias · doble verificación al ingresar en cuentas administrativas · decisión final sobre la notificación legal</td>
+          <td>Cuentas personales obligatorias · doble verificación en cuentas administrativas · decisión sobre la notificación legal</td>
           <td>Sistemas · Jurídico · Dirección Médica</td>
         </tr>
       </tbody>
     </table>
+  </section>
+
+  <section class="consecuencias">
+    <h2>Qué puede hacer un atacante con lo que se expuso</h2>
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 34%;">Lo que se expuso</th>
+          <th>Qué puede hacer el atacante</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for g in consecuencias %}
+        <tr>
+          <td><strong>{{ g.activo_simple }}</strong></td>
+          <td><ul>{% for c in g.consecuencias %}<li>{{ c.accion_simple }}</li>{% endfor %}</ul></td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    <p><strong>Lo que lo evita:</strong> bloquear las salidas no autorizadas a internet y usar una cuenta personal por
+      funcionario con doble verificación (decisiones 1 y 2 de la página 1), y pedir a Sistemas que cierre los servicios
+      antiguos de la red clínica.</p>
   </section>
 
   <div class="en-numeros">

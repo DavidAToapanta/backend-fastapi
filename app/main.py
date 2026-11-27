@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.auditoria import rutas_auditoria
 from app.api.campanas import rutas_campanas
+from app.api.consecuencias import rutas_consecuencias
 from app.api.exportaciones import rutas_exportaciones
 from app.api.llm import rutas_llm
 from app.api.misp import rutas_misp
@@ -21,6 +22,7 @@ app.add_middleware(
 app.include_router(rutas)
 app.include_router(rutas_panel)
 app.include_router(rutas_campanas)
+app.include_router(rutas_consecuencias)
 app.include_router(rutas_exportaciones)
 app.include_router(rutas_auditoria)
 app.include_router(rutas_llm)

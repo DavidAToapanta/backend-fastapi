@@ -11,10 +11,21 @@ from app.core.configuracion_servicios import url_ollama, valor_configurado
 MODELO_POR_DEFECTO = "qwen3:4b"
 LIMITE_RESPUESTA = 64 * 1024
 
+# La acción prioritaria es FIJA: hay una posible salida de datos de salud (CAMP-2026-001),
+# así que ninguna respuesta del modelo puede cambiarla por un control secundario.
+ACCION_PRIORITARIA = (
+    "Acción prioritaria: bloquear el egreso no autorizado, suspender las 16 cuentas especiales compartidas "
+    "y evaluar la notificación a la Superintendencia de Protección de Datos Personales (LOPDP art. 43: máximo 5 días)."
+)
+CONCLUSION_BASE = (
+    "Conclusión: es probable un abuso interno persistente de cuentas privilegiadas (CAMP-2026-005) y es posible "
+    "su relación con la salida de datos del 24-oct (CAMP-2026-001), con confianza baja-media."
+)
+# Ollama solo elige cuál control complementario destacar.
 CONTROLES = {
-    "privilegios": "Acción prioritaria: suspender cuentas compartidas y priorizar la revisión de privilegios y alertas de cuentas.",
-    "egreso": "Acción prioritaria: bloquear el egreso no autorizado y priorizar la revisión de transferencias externas atípicas.",
-    "reloj": "Acción prioritaria: priorizar la sincronización de los relojes locales y validar las correlaciones temporales.",
+    "privilegios": "Control complementario: revisar los privilegios y las alertas de las cuentas especiales.",
+    "egreso": "Control complementario: revisar las transferencias externas atípicas desde la red clínica.",
+    "reloj": "Control complementario: sincronización de los relojes del firewall y del sistema médico para confirmar correlaciones.",
 }
 
 PROMPT_SISTEMA_BLUF = (
@@ -48,25 +59,22 @@ class EnfoqueConclusiones(BaseModel):
 
 
 def redactar_conclusion(enfoque: EnfoqueConclusiones, hechos: dict[str, int]) -> str:
-    """Compone una síntesis BLUF (acción y conclusión primero) usando solo cifras verificadas."""
-    accion = CONTROLES[enfoque.prioridad]
+    """Compone la síntesis BLUF: acción prioritaria fija, conclusión, respaldo con cifras y control complementario."""
     if enfoque.lectura == "cobertura_ml":
         genericas = hechos["campanas_detectadas_ml_genericas"]
         dominio = hechos["campanas_detectadas_ml_dominio"]
         total = hechos["campanas_evaluadas"]
         respaldo = (
-            f"Conclusión operativa: es probable que el abuso de privilegios requiera contención prioritaria "
-            f"(detección ML sin reglas de {genericas} de {total} campañas en versión genérica y {dominio} de {total} "
-            "con dominio); la relación entre campañas previas y la posible salida externa sigue como hipótesis y "
-            "el resto de anomalías queda por confirmar."
+            f"Respaldo: el modelo sin reglas detectó {genericas} de {total} campañas con variables genéricas "
+            f"y {dominio} de {total} con variables de dominio."
         )
     else:
         conteo = f"{hechos['ips_sin_puntos']:,}".replace(",", ".")
         respaldo = (
-            f"Conclusión de calidad y trazabilidad: se confirmaron {conteo} IP sin puntos en registros horarios "
-            "locales; su normalización es obligatoria antes de correlacionar eventos. El volumen exfiltrado sigue por confirmar."
+            f"Respaldo: se normalizaron {conteo} IP sin puntos antes de correlacionar eventos; "
+            "el volumen de datos que salió sigue por confirmar."
         )
-    return f"{accion} {respaldo}"
+    return f"{ACCION_PRIORITARIA} {CONCLUSION_BASE} {respaldo} {CONTROLES[enfoque.prioridad]}"
 
 
 def generar_conclusiones(hechos: dict[str, int]) -> str:

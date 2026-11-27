@@ -35,7 +35,7 @@ HALLAZGOS = {
     "CAMP-2026-002": "30 sesiones SSH y 2.970 transferencias interrumpidas desde 10.10.100.50 hacia el servidor clínico.",
     "CAMP-2026-003": "2.000 intentos negados sobre Telnet 23/tcp correlacionados con 2.000 accesos fallidos en cuenta técnica.",
     "CAMP-2026-004": "Escaneo horizontal multiservicio (137, 445, 3389, 8471) y password spraying desde 10.10.100.20.",
-    "CAMP-2026-005": "Abuso persistente en 16 cuentas especiales: 11 compartidas por decenas o cientos de personas (hasta 1.737).",
+    "CAMP-2026-005": "Abuso persistente en 16 cuentas especiales: 11 compartidas por decenas o cientos de usuarios (hasta 1.737).",
 }
 
 JUICIO_CLAVE = (
@@ -195,7 +195,7 @@ MARCO_LEGAL = (
     "el art. 43 de la LOPDP (reformado por la Ley Orgánica para el Fortalecimiento de la Ciberseguridad "
     "del 22 de mayo de 2026) exige notificar a la Superintendencia de Protección de Datos Personales tan "
     "pronto sea posible y como máximo hasta en 5 días. Se consideran además los arts. 25 y 30 (datos relativos "
-    "a la salud como categoría especial), art. 37 (medidas de seguridad y seudonimización), art. 40 (análisis de riesgos), "
+    "a la salud como categoría especial), art. 40 (análisis de riesgos), "
     "la Política de Seguridad del IESS art. 27 y el estándar EGSI 1.7."
 )
 
@@ -213,7 +213,7 @@ MATRIZ_TACTICA = [
 DETALLE_OPERATIVO_CAMPANAS = [
     (
         "CAMP-2026-001",
-        "24-oct 22:40 (hora local)",
+        "24-oct 22:40",
         "SSH permitido + descarga + egreso en 30 s (desfase +12 h corregido)",
         "IOA-05",
         "Alta",
@@ -221,7 +221,7 @@ DETALLE_OPERATIVO_CAMPANAS = [
     ),
     (
         "CAMP-2026-005",
-        "01–31 oct (hora local)",
+        "01–31 oct",
         "14.501 eventos en 16 cuentas; 131 cambios de nivel, 1.098 activaciones, 826 reactivaciones",
         "IOA-06, IOA-07, IOA-08",
         "Alta",
@@ -229,7 +229,7 @@ DETALLE_OPERATIVO_CAMPANAS = [
     ),
     (
         "CAMP-2026-004",
-        "19-oct 14:00 (hora local)",
+        "19-oct 14:00",
         "1.000 eventos en 4 puertos críticos (137, 445, 3389, 8471) + 1.076 fallos en spraying",
         "IOA-01, IOA-02, IOA-03, IOA-06, IOA-08",
         "Alta",
@@ -237,7 +237,7 @@ DETALLE_OPERATIVO_CAMPANAS = [
     ),
     (
         "CAMP-2026-002",
-        "07-oct 13:00 (hora local)",
+        "07-oct 13:00",
         "30 sesiones SSH exitosas y 2.970 transferencias interrumpidas en 1 h",
         "IOA-04, IOA-09",
         "Alta",
@@ -245,7 +245,7 @@ DETALLE_OPERATIVO_CAMPANAS = [
     ),
     (
         "CAMP-2026-003",
-        "10-oct 00:00 (hora local)",
+        "10-oct 00:00",
         "2.000 intentos negados por Telnet 23/tcp ↔ 2.000 accesos fallidos en sistema médico",
         "IOA-01, IOA-03",
         "Alta",
@@ -273,8 +273,8 @@ CATALOGO_IOA = [
 ]
 
 TABLA_ANTICIPACION = [
-    ("Riesgo previo por cuenta", "Cuenta del incidente B en riesgo CRÍTICO 16 días antes; las de E, desde el día 1."),
-    ("Alerta temprana", "Incidentes A, B, C y D alertados en la misma hora; solo 2 falsas alarmas en 744 h."),
+    ("Riesgo previo por cuenta", "Cuenta de CAMP-2026-004 en riesgo CRÍTICO 16 días antes; las de CAMP-2026-005, desde el día 1."),
+    ("Alerta temprana", "CAMP-2026-001, 002, 003 y 004 alertadas en la misma hora; solo 2 falsas alarmas en 744 h."),
     ("Siguiente fase", "Acierta 4/5 en su Top-3 de transición, con un control recomendado por fase."),
     ("Velocidad del ataque", "Caso 001: 30 s del SSH a la exfiltración → la contención debe ser automática."),
 ]
@@ -284,8 +284,14 @@ BRECHAS_LIMITACIONES = [
     "El vínculo CAMP-2026-005 → CAMP-2026-001 se mantiene como posible, no probable (baja-media confianza).",
     "No existe atribución confirmada a un actor o persona concreta sin autorización Break-Glass y cotejo de Talento Humano.",
     "Los datos pertenecen a un ejercicio sintético; todos los umbrales deben recalibrarse sobre telemetría productiva real.",
-    "Las cuentas de los incidentes A, C y D no contaban con historial previo para anticipación temprana (fueron detectadas en la misma hora).",
+    "Las cuentas de CAMP-2026-001, 002 y 003 no tenían historial previo para anticipar el ataque (se detectaron en la misma hora).",
 ]
+
+# Señales de que un escenario IPE está empezando (salen de las reglas propias, no de supuestos).
+SENALES_ESCENARIO = {
+    "Más probable": "Una cuenta especial operada por más de 3 usuarios (IOA-06) o una ráfaga de accesos fallidos sobre una cuenta (IOA-03).",
+    "Más peligroso": "Descarga clínica seguida de conexión externa en menos de 600 s (IOA-05) o 50 o más transferencias interrumpidas en una hora (IOA-04).",
+}
 
 TEXTO = {
     "resumen": JUICIO_CLAVE,
@@ -303,13 +309,11 @@ TEXTO = {
     "impacto": MARCO_LEGAL,
     "comportamiento_observable": "Patrones de comportamiento generalizables (IOA-01 a IOA-09) para detección independiente de direcciones IP.",
     "indicador_compromiso": "Indicadores puntuales de contención inmediata (TLP:AMBER) derivados del análisis del periodo.",
-    "alcance_ipe": (
-        "Evaluación global de escenarios probable y peligroso combinada con backtesting de anticipación temporal (sin fuga futura)."
-    ),
+    "alcance_ipe": "Escenarios globales del adversario (IPE) y señales que indican que cada uno está empezando.",
     "controles": [
         ("Inmediato (hoy)", "Bloquear egreso hacia 186.46.219[.]18:8443 y salidas no autorizadas; suspender las 16 cuentas especiales; desactivar Telnet 23 y SMBv1 445; preservar evidencias e iniciar evaluación LOPDP art. 43 (máx. 5 días)."),
-        ("Corto plazo (48 h – 1 sem.)", "Aislar 10.10.100.20, restringir 10.10.100.30 a bastión con MFA y cuentas nominales, migrar servicios 8470–8478 a TLS 9470–9476 y homologar registro horario local institucional."),
+        ("Corto plazo (48 h – 1 sem.)", "Aislar 10.10.100.20, restringir 10.10.100.30 a bastión con MFA y cuentas nominales, migrar servicios 8470–8476 a TLS 9470–9476 y homologar registro horario local institucional."),
         ("Mediano plazo", "Desplegar las 10 reglas Sigma en SIEM, automatizar respuesta para ataques menores a 30 s, cargar los 82 objetos STIX 2.1 en MISP y auditar la cadena SHA-256."),
     ],
-    "nota_mapa_calor": "Hora local del registro. Los picos corresponden a los incidentes C (7-oct 13 h), A (10-oct 00 h) y B (19-oct 14 h).",
+    "nota_mapa_calor": "Hora local del registro. Los picos corresponden a CAMP-2026-002 (7-oct 13 h), CAMP-2026-003 (10-oct 00 h) y CAMP-2026-004 (19-oct 14 h).",
 }

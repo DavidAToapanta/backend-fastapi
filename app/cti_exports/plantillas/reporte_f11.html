@@ -25,7 +25,6 @@
       font: 9.2pt/1.38 "DejaVu Sans", sans-serif;
     }
     p { margin: 0 0 2.5mm; }
-    .pagina + .pagina { break-before: page; }
     .portada { border-top: 2.3mm solid #0b5d46; padding-top: 3mm; margin-bottom: 3mm; }
     .linea-ficha {
       color: #0b5d46;
@@ -151,6 +150,22 @@
     figcaption { color: #415866; font-size: 8pt; }
     ul { margin: 1mm 0 2mm; padding-left: 5mm; }
     li { margin-bottom: 1mm; }
+    .tabla ul { margin: 0; padding-left: 4mm; }
+    .tabla li { margin-bottom: .8mm; }
+    .fuente-caso { color: #415866; font-size: 7.4pt; }
+    .fuentes { font-size: 7.4pt; color: #36524b; margin: 0 0 3mm; }
+    .fuentes li { margin-bottom: .5mm; overflow-wrap: anywhere; }
+    .obligacion { color: #912018; font-weight: bold; }
+    .bloque-junto { break-inside: avoid; }
+    .nivel { display: inline-block; padding: .3mm 1.5mm; margin-bottom: .6mm; border-radius: .8mm; font-size: 7.6pt; font-weight: bold; white-space: nowrap; }
+    .nivel-alta, .nivel-alto { background: #ffedd5; color: #9a3412; border: .2mm solid #fdba74; }
+    .nivel-media { background: #fef3c7; color: #854d0e; border: .2mm solid #fcd34d; }
+    .nivel-critico { background: #fee4e2; color: #912018; border: .2mm solid #f9b5b0; }
+    pre.codigo {
+      font: 7.4pt/1.35 "DejaVu Sans Mono", monospace;
+      background: #f4f7f6; border: .25mm solid #d5e4dc; padding: 2mm 2.5mm;
+      white-space: pre-wrap; overflow-wrap: anywhere; break-inside: avoid; margin: 1mm 0 3mm;
+    }
   </style>
 </head>
 <body>
@@ -168,9 +183,6 @@
           Para: {{ metadata.destinatario | default("SOC / Seguridad de la Información IESS") }} ·
           {{ metadata.nota_datos | default("Datos sintéticos de ejercicio") }}
         </div>
-        {% if estado is defined %}
-        <div class="sello-estado">{{ estado }}</div>
-        {% endif %}
         {% if nota_solicitante | default(none) %}
         <p class="nota"><span class="etiqueta">Nota del operador:</span> {{ nota_solicitante }}</p>
         {% endif %}
@@ -238,7 +250,6 @@
 
     <!-- PÁGINA 2: SECCIONES 1, 2 Y 3 -->
     <div class="pagina">
-      <div class="linea-ficha encabezado-pagina">AegisHealth-CTI / Ficha F-11 · TLP:AMBER</div>
 
       <section>
         <h2>1. Fuentes y metodología</h2>
@@ -263,12 +274,10 @@
           {% endfor %}
           </tbody>
         </table>
-        <p><span class="etiqueta">Alcance de valoración:</span> {{ admiralty }}</p>
       </section>
 
       <section>
         <h2>2. Evaluación de adversarios (Modelo Diamante)</h2>
-        <p>{{ adversarios }}</p>
         <table class="tabla">
           <thead>
             <tr>
@@ -316,12 +325,40 @@
           </tbody>
         </table>
         <p class="nota">{{ impacto }}</p>
+
+        <h3>3.1 Consecuencias si se confirma el compromiso: qué puede hacer el atacante (casos reales)</h3>
+        <p>Cada consecuencia tiene un precedente público verificable; no se incluyen supuestos sin caso real.</p>
+        <table class="tabla">
+          <thead>
+            <tr>
+              <th style="width: 19%;">Qué se vulneró</th>
+              <th style="width: 27%;">Qué puede hacer el atacante</th>
+              <th>Ya ocurrió (caso real)</th>
+              <th style="width: 21%;">Qué lo corta</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for g in consecuencias %}
+            <tr>
+              <td><strong>{{ g.activo }}</strong><br><span class="fuente-caso">{{ g.campanas | join(", ") }} · {{ g.evidencia }}</span></td>
+              <td><ul>{% for c in g.consecuencias %}<li>{{ c.accion }}</li>{% endfor %}</ul></td>
+              <td><ul>{% for c in g.consecuencias %}<li><strong>{{ c.caso_nombre }}:</strong> {{ c.caso_hecho }} <span class="fuente-caso">({{ c.fuente }})</span></li>{% endfor %}</ul></td>
+              <td>{{ g.control }}{% if g.obligacion %}<br><span class="obligacion">{{ g.obligacion }}</span>{% endif %}</td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        <p class="etiqueta" style="font-size: 7.8pt; margin-bottom: 1mm;">Fuentes de los casos</p>
+        <ul class="fuentes">
+        {% for nombre, fuente, url in fuentes_consecuencias %}
+          <li>{{ nombre }} · {{ fuente }} · {{ url }}</li>
+        {% endfor %}
+        </ul>
       </section>
     </div>
 
     <!-- PÁGINA 3: SECCIONES 4 Y 5 -->
     <div class="pagina">
-      <div class="linea-ficha encabezado-pagina">AegisHealth-CTI / Ficha F-11 · TLP:AMBER</div>
 
       <section>
         <h2>4. Inteligencia táctica (Matriz campaña × táctica MITRE ATT&amp;CK)</h2>
@@ -368,9 +405,9 @@
             <tr>
               <th>Campaña</th>
               <th>Fecha (hora local)</th>
-              <th>Conteos y reglas IoA</th>
+              <th>Qué se observó</th>
+              <th>Reglas que lo detectaron</th>
               <th>Confianza</th>
-              <th>Hallazgo</th>
             </tr>
           </thead>
           <tbody>
@@ -378,9 +415,9 @@
             <tr>
               <td><strong>{{ cod }}</strong></td>
               <td>{{ fecha_l }}</td>
-              <td>{{ conteo }} ({{ reglas }})</td>
+              <td>{{ conteo }}</td>
+              <td>{{ reglas }}</td>
               <td>{{ conf }}</td>
-              <td>{{ hall }}</td>
             </tr>
           {% endfor %}
           </tbody>
@@ -390,7 +427,6 @@
 
     <!-- PÁGINA 4: CRONOLOGÍA 001 + MAPA HORARIO + SECCIÓN 6 -->
     <div class="pagina">
-      <div class="linea-ficha encabezado-pagina">AegisHealth-CTI / Ficha F-11 · TLP:AMBER</div>
 
       <section>
         <h3>Cronología de CAMP-2026-001 (hora local del registro)</h3>
@@ -474,8 +510,9 @@
         <p>{{ metricas }}</p>
         <p class="nota">{{ exportaciones }}</p>
         {% if muestra_sigma is defined %}
-        {% for grupo, regla in muestra_sigma %}
-        <p><span class="etiqueta">Ejemplo Sigma {{ grupo }}:</span> {{ regla }}</p>
+        {% for grupo, titulo, yaml in muestra_sigma %}
+        <p style="margin-bottom: .5mm;"><span class="etiqueta">Ejemplo de regla Sigma {{ grupo }}:</span> {{ titulo }}</p>
+        {% if yaml %}<pre class="codigo">{{ yaml }}</pre>{% endif %}
         {% endfor %}
         {% endif %}
       </section>
@@ -483,29 +520,37 @@
 
     <!-- PÁGINA 5: SECCIONES 7, 8 + ANEXOS A Y B -->
     <div class="pagina">
-      <div class="linea-ficha encabezado-pagina">AegisHealth-CTI / Ficha F-11 · TLP:AMBER</div>
 
       <section>
+        <div class="bloque-junto">
         <h2>7. Evaluación de escenarios (IPE) y anticipación</h2>
         <p>{{ alcance_ipe }}</p>
-        {% if grafico_ipe is defined %}
-        <figure>
-          <img src="{{ grafico_ipe }}" alt="Matriz cualitativa de probabilidad e impacto">
-        </figure>
-        {% endif %}
-        <table class="tabla">
+        <table class="tabla escenarios">
           <thead>
-            <tr><th>Escenario</th><th>Probabilidad</th><th>Impacto</th><th>Descripción</th></tr>
+            <tr>
+              <th style="width: 15%;">Escenario</th>
+              <th style="width: 17%;">Campañas</th>
+              <th style="width: 15%;">Probabilidad / impacto</th>
+              <th>Qué pasaría</th>
+              <th style="width: 30%;">Señal de que está empezando</th>
+            </tr>
           </thead>
           <tbody>
-          {% for nombre, probabilidad, impacto_ipe, descripcion in escenarios %}
+          {% for e in escenarios_detalle %}
             <tr>
-              <th scope="row">{{ nombre }}</th><td>{{ probabilidad }}</td>
-              <td>{{ impacto_ipe }}</td><td>{{ descripcion }}</td>
+              <td><strong>{{ e.nombre }}</strong></td>
+              <td>{{ e.campanas }}</td>
+              <td>
+                <span class="nivel nivel-{{ e.probabilidad | lower }}">Prob. {{ e.probabilidad }}</span><br>
+                <span class="nivel nivel-{{ 'critico' if e.impacto == 'Crítico' else 'alto' }}">Impacto {{ e.impacto }}</span>
+              </td>
+              <td>{{ e.descripcion }}</td>
+              <td>{{ e.senal }}</td>
             </tr>
           {% endfor %}
           </tbody>
         </table>
+        </div>
 
         <h3>Anticipación temporal validada (sin fuga de información futura)</h3>
         <table class="tabla">

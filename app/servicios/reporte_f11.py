@@ -17,15 +17,16 @@ from app.cti_exports.contenido_f11 import (
     HALLAZGOS,
     IMPACTO_ESTRATEGICO,
     JUICIO_CLAVE,
-    MARCO_LEGAL,
     MATRIZ_TACTICA,
     METADATA_F11,
     MODELO_DIAMANTE,
+    SENALES_ESCENARIO,
     TABLA_ANTICIPACION,
     TABLA_IOC,
     TECNICAS,
     TEXTO,
 )
+from app.cti_exports.consecuencias import filas_ejecutivo, filas_tecnico, fuentes_usadas
 from app.cti_exports.graficos import dibujar_graficos
 from app.cti_exports.pdf_compiler import Audiencia, renderizar_pdf
 from app.servicios.auditoria import AuditoriaNoDisponible, comprobar_cadena_auditoria, listar_eventos_auditoria
@@ -37,6 +38,12 @@ from backend.app.core.security import registrar_evento_auditoria
 
 RUTA_EVIDENCIAS = Path(__file__).resolve().parents[2] / "docs" / "evidencias" / "evidencias.json"
 IP_EXTERNA_RE = re.compile(r"\b186\.46\.219\.18\b")
+NOTA_RELOJ_RE = re.compile(r"\s*\(reloj origen [^)]*\)")
+TILDES_CRONOLOGIA = {
+    "Conexion": "Conexión",
+    "Trafico_TCP_Desconocido": "Tráfico TCP desconocido",
+    "publica sintetica": "pública sintética",
+}
 
 NOMBRE_FUENTE_LEGIBLE = {
     "FIREWALL": "Firewall perimetral",
@@ -75,8 +82,8 @@ def _extraer_anticipacion(anticipacion: dict | None) -> tuple[int, int, str, lis
         if isinstance(sig, dict) and isinstance(sig.get("aciertos_top_3"), str):
             siguiente_fase = sig["aciertos_top_3"]
     tabla = [
-        ("Riesgo previo por cuenta", f"Cuenta del incidente B en riesgo CRÍTICO {dias} días antes; las de E, desde el día 1."),
-        ("Alerta temprana", f"Incidentes A, B, C y D alertados en la misma hora; {falsas_744} falsas alarmas en 744 h."),
+        ("Riesgo previo por cuenta", f"Cuenta de CAMP-2026-004 en riesgo CRÍTICO {dias} días antes; las de CAMP-2026-005, desde el día 1."),
+        ("Alerta temprana", f"CAMP-2026-001, 002, 003 y 004 alertadas en la misma hora; {falsas_744} falsas alarmas en 744 h."),
         ("Siguiente fase", f"Acierta {siguiente_fase} en su Top-3 de transición, con un control recomendado por fase."),
         ("Velocidad del ataque", "Caso 001: 30 s del SSH a la exfiltración → la contención debe ser automática."),
     ]
@@ -126,6 +133,14 @@ def _extraer_ioas(hallazgos_json: dict | None) -> tuple[str, list[tuple[str, str
     return cobertura_ioa, CATALOGO_IOA, cuentas_compartidas, max_identidades
 
 
+def recortar_yaml(texto: str, max_lineas: int = 24) -> str:
+    """Muestra una regla Sigma real en el PDF, con la IP externa desactivada."""
+    lineas = defang_ips(texto).strip().splitlines()
+    if len(lineas) > max_lineas:
+        lineas = lineas[:max_lineas] + ["# … (regla completa en el paquete Sigma)"]
+    return "\n".join(lineas)
+
+
 def verificar_fuentes(resumen: dict) -> list[tuple[str, str, str]]:
     evidencia = json.loads(RUTA_EVIDENCIAS.read_text(encoding="utf-8-sig"))["resumen_datasets"]
     eventos = listar_eventos_auditoria()
@@ -154,6 +169,14 @@ def verificar_fuentes(resumen: dict) -> list[tuple[str, str, str]]:
     return fuentes
 
 
+def limpiar_detalle(texto: str) -> str:
+    """Quita la nota técnica repetida del reloj y corrige tildes del texto que viene de la base."""
+    texto = NOTA_RELOJ_RE.sub("", texto)
+    for original, corregido in TILDES_CRONOLOGIA.items():
+        texto = texto.replace(original, corregido)
+    return defang_ips(texto)
+
+
 def _formatear_cronologia_local(linea: list[dict]) -> list[tuple[str, str, str, str]]:
     """Convierte eventos de campaña 001 a hora local sin +00:00 ni UTC mostrando el +12 h."""
     filas = []
@@ -168,7 +191,7 @@ def _formatear_cronologia_local(linea: list[dict]) -> list[tuple[str, str, str, 
             hora_original = dt_local.strftime("%Y-%m-%d %H:%M:%S")
             hora_ajustada = "—"
         fuente_legible = NOMBRE_FUENTE_LEGIBLE.get(evento["fuente"], str(evento["fuente"]))
-        detalle = defang_ips(str(evento.get("resumen") or "Evento correlacionado"))
+        detalle = limpiar_detalle(str(evento.get("resumen") or "Evento correlacionado"))
         filas.append((hora_original, hora_ajustada, fuente_legible, detalle))
     return filas
 
@@ -223,6 +246,7 @@ def recopilar_insumos() -> tuple[dict, dict, dict[str, int]]:
         )
     ]
 
+    consecuencias = filas_tecnico()
     fw_ips = next((f["ips_sin_puntos"] for f in resumen["por_fuente"] if f["fuente"] == "FIREWALL"), 0)
     med_ips = next((f["ips_sin_puntos"] for f in resumen["por_fuente"] if f["fuente"] == "MEDSYS"), 0)
 
@@ -232,19 +256,16 @@ def recopilar_insumos() -> tuple[dict, dict, dict[str, int]]:
         "juicio_clave": JUICIO_CLAVE,
         "indicadores": [
             ("1 crítica", "Exfiltración simulada (24-oct)"),
-            (f"{dominio.incidentes_top_n} · {cobertura_ioa}", "Campañas detectadas (ML / IoA)"),
+            (f"IoA {cobertura_ioa} · ML {genericas.incidentes_top_n}", "Campañas detectadas (reglas / ML sin reglas)"),
             ("0 / 10.000", "Falsas alarmas en cuentas normales"),
             (f"{dias_antic} días", "Anticipación previa al ataque"),
         ],
         "campanas_prioridad": CAMPANAS_PRIORIDAD,
         "cifras_clave": [
-            (formato_entero(resumen["total_eventos"]), "Registros"),
-            (calidad_texto, "Calidad FW / Med"),
-            (cobertura_ioa, "Reglas IoA"),
-            (f"{genericas.incidentes_top_n} ({dominio.incidentes_top_n} dom.)", "ML sin reglas"),
-            ("0 / 10.000", "Normales marcadas"),
-            (f"{dias_antic} días", "Anticipación"),
-            (f"{falsas_744} en {resumen['horas']} h", "Falsas alarmas"),
+            (formato_entero(resumen["total_eventos"]), "Registros analizados"),
+            (calidad_texto, "Calidad Firewall / Sistema médico"),
+            (dominio.incidentes_top_n, "ML con variables de dominio"),
+            (f"{falsas_744} en {resumen['horas']} h", "Falsas alarmas de la alerta temprana"),
         ],
         "acciones_prioritarias": ACCIONES_PRIORITARIAS,
         "fuentes_admiralty": FUENTES_ADMIRALTY,
@@ -253,10 +274,7 @@ def recopilar_insumos() -> tuple[dict, dict, dict[str, int]]:
         "tecnicas": [(tecnica, TECNICAS.get(tecnica, "Técnica registrada en el catálogo.")) for tecnica in tecnicas],
         "matriz_tactica": MATRIZ_TACTICA,
         "detalle_operativo": DETALLE_OPERATIVO_CAMPANAS,
-        "nota_temporal": (
-            "Cronología del incidente CAMP-2026-001 en hora local del registro: conserva el orden causal "
-            "de los cuatro eventos y muestra la hora original del sistema médico junto al ajuste selectivo de +12 h."
-        ),
+        "nota_temporal": "El reloj del sistema médico va 12 h atrasado; se muestra su hora original y la ajustada.",
         "cronologia": cronologia,
         "tabla_ioc": TABLA_IOC,
         "catalogo_ioa": catalogo_ioa,
@@ -264,9 +282,9 @@ def recopilar_insumos() -> tuple[dict, dict, dict[str, int]]:
             f"IsolationForest sin reglas: variables genéricas detectan {genericas.incidentes_top_n} campañas "
             f"en Top-{genericas.top_n} y variables de dominio detectan {dominio.incidentes_top_n} en Top-{dominio.top_n} "
             f"(las {cuentas_esp} cuentas especiales ocupan los puestos 1 a {cuentas_esp} de 10.016 cuentas). "
-            f"En anomalías sin confirmar del modelo genérico ({anomalias.firewall_por_hora} FW/h, "
-            f"{anomalias.medsys_por_hora} médico/h y {anomalias.medsys_por_periodo} médico/período), las primeras "
-            f"{cuentas_esp} coinciden con las cuentas especiales confirmadas por las reglas IoA; el resto queda para revisión."
+            f"Anomalías del modelo genérico pendientes de revisión: {anomalias.firewall_por_hora} ventanas firewall/hora, "
+            f"{anomalias.medsys_por_hora} médico/hora y {anomalias.medsys_por_periodo} médico/período. En el ranking por "
+            f"cuenta, las {cuentas_esp} primeras coinciden con las cuentas especiales confirmadas por las reglas IoA."
         ),
         "exportaciones": (
             f"Sigma: {len(sigma['ioa'])} archivos IoA y {len(sigma['ioc'])} IoC "
@@ -274,15 +292,25 @@ def recopilar_insumos() -> tuple[dict, dict, dict[str, int]]:
             f"STIX 2.1: {total_objetos_stix} objetos ({indicadores_stix} indicadores) compatibles con MISP bajo TLP:AMBER."
         ),
         "muestra_sigma": [
-            ("IoA", sigma["ioa"][0]["titulo"]),
-            ("IoC", sigma["ioc"][0]["titulo"]),
+            ("IoA", sigma["ioa"][0]["titulo"], recortar_yaml(sigma["ioa"][0].get("yaml", ""))),
         ],
         "escenarios": escenarios,
+        "escenarios_detalle": [
+            {
+                "nombre": e["nombre"],
+                "campanas": ", ".join(e["campanas"]),
+                "probabilidad": prob,
+                "impacto": imp,
+                "descripcion": defang_ips(e["descripcion"]),
+                "senal": SENALES_ESCENARIO[e["nombre"]],
+            }
+            for e, (_, prob, imp, _) in zip(ESCENARIOS_IPE, escenarios, strict=True)
+        ],
         "tabla_anticipacion": tabla_anticipacion,
         "brechas": BRECHAS_LIMITACIONES,
         "anexo_hashes": fuentes,
         "anexo_calidad": [
-            ("Calidad estructural", f"{calidad_texto} (BOM UTF-8 y errata TRANFERENCIA normalizados en ETL)"),
+            ("Calidad estructural", f"{calidad_texto.replace(' / ', ' Firewall / ')} Sistema médico (BOM UTF-8 y errata TRANFERENCIA normalizados en ETL)"),
             (
                 "IP sin puntos normalizadas",
                 f"{formato_entero(resumen['ips_sin_puntos'])} registros reparados "
@@ -290,8 +318,10 @@ def recopilar_insumos() -> tuple[dict, dict, dict[str, int]]:
             ),
             ("Duplicados exactos registrados", f"{formato_entero(dup_fw)} en Firewall y {formato_entero(dup_med)} en Sistema médico"),
             ("Privacidad y seudonimización", "0 PII expuesta; identidades y cuentas técnicas con HMAC-SHA256 truncado a 12 hex"),
-            ("Cumplimiento normativo", MARCO_LEGAL),
+            ("Cumplimiento normativo", "Ver sección 3 (LOPDP art. 43: notificación en máximo 5 días)."),
         ],
+        "consecuencias": consecuencias,
+        "fuentes_consecuencias": fuentes_usadas(consecuencias),
     }
     return datos, mapa, hechos
 
@@ -316,18 +346,14 @@ def preparar_f11(verificacion: dict, summary: str | None) -> tuple[dict, dict]:
     datos_pdf = dict(
         datos,
         conclusiones=defang_ips(cache.text),
-        estado=(
-            "Edición técnica validada · TLP:AMBER · Datos sintéticos"
-            if cache.revisado
-            else "Edición técnica generada · TLP:AMBER · Datos sintéticos"
-        ),
+        estado=None,
         grafico_horario=horario,
         grafico_ipe=matriz_ipe,
         nota_solicitante=defang_ips(summary) if isinstance(summary, str) and summary.strip() else None,
         huella_insumos=huella,
         estado_evidencias=(
             f"Cadena SHA-256 íntegra verificada antes de emitir este documento: "
-            f"{verificacion['checked_rows']} registros auditados. "
+            f"{verificacion['checked_rows']} eventos de la cadena de auditoría revisados. "
             "La huella criptográfica de esta descarga queda registrada en su evento de auditoría."
         ),
     )
@@ -363,6 +389,7 @@ def preparar_ejecutivo_medico() -> tuple[dict, dict]:
         "clasificacion": METADATA_F11["clasificacion"],
         "version": METADATA_F11["version"],
         "fecha_emision": METADATA_F11["fecha_emision"],
+        "consecuencias": filas_ejecutivo(),
     }
     return datos, {"sourceSha256": hashlib.sha256(archivo).hexdigest()}
 
